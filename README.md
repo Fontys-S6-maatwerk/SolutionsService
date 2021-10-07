@@ -1,1 +1,1 @@
-# GGCGateway
+# SolutionsService
