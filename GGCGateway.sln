@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GGCGateway", "GGCGateway\GGCGateway.csproj", "{C8D0FDB2-D8B6-4838-9C60-668D1EAD6CE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GGCGatewayTest", "GGCGatewayTest\GGCGatewayTest.csproj", "{BC758B32-46F9-46C1-BD8B-A76D9B32FC57}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C8D0FDB2-D8B6-4838-9C60-668D1EAD6CE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8D0FDB2-D8B6-4838-9C60-668D1EAD6CE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8D0FDB2-D8B6-4838-9C60-668D1EAD6CE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8D0FDB2-D8B6-4838-9C60-668D1EAD6CE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC758B32-46F9-46C1-BD8B-A76D9B32FC57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC758B32-46F9-46C1-BD8B-A76D9B32FC57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC758B32-46F9-46C1-BD8B-A76D9B32FC57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC758B32-46F9-46C1-BD8B-A76D9B32FC57}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {668BF93A-4A72-4321-822A-3BB1FFBD9E71}
+	EndGlobalSection
+EndGlobal
