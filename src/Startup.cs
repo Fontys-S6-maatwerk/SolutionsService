@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SolutionsService.Data;
 
 namespace SolutionsService
 {
@@ -32,6 +34,9 @@ namespace SolutionsService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SolutionsService", Version = "v1" });
             });
+
+            services.AddDbContext<SolutionsServiceContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("SolutionsServiceContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
