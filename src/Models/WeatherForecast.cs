@@ -1,6 +1,6 @@
 using System;
 
-namespace SolutionsService
+namespace SolutionsService.Models
 {
     public class WeatherForecast
     {
