@@ -103,30 +103,35 @@ namespace SolutionsService.Controllers
         [HttpPut("{id}/likes/{userId}")]
         public async Task<IActionResult> LikeSolution(long id, long userId)
         {
+            //TODO: implement
             return NoContent();
         }
 
         [HttpDelete("{id}/likes/{userId}")]
         public async Task<IActionResult> UnlikeSolution(long id, long userId)
         {
+            //TODO: implement
             return NoContent();
         }
 
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetSolutionsFromAuthor(long id)
         {
+            //TODO: implement
             return new OkResult();
         }
 
         [HttpGet("liked/{id}")]
         public async Task<IActionResult> GetSolutionsLikedByUser(long id)
         {
+            //TODO: implement
             return new OkResult();
         }
 
         [HttpGet("followed/{id}")]
         public async Task<IActionResult> GetSolutionsFollowedByUser(long id)
         {
+            //TODO: implement
             return new OkResult();
         }
 
