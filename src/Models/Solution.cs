@@ -12,6 +12,7 @@ namespace SolutionsService.Models
         public Solution()
         {
             this.SDGs = new HashSet<SDG>();
+            this.Likes = new HashSet<Like>();
         }
 
         [Key]
@@ -30,5 +31,6 @@ namespace SolutionsService.Models
         [Column(TypeName = "datetime2")]
         public DateTime UploadDate { get; set; }
         public long ViewCount { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
     }
 }
