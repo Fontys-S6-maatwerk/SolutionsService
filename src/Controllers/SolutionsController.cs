@@ -30,7 +30,7 @@ namespace SolutionsService.Controllers
 
         // GET: api/Solutions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Solution>> GetSolution(Guid id)
+        public async Task<ActionResult<Solution>> GetSolution(long id)
         {
             var solution = await _context.Solution.FindAsync(id);
 
@@ -45,9 +45,9 @@ namespace SolutionsService.Controllers
         // PUT: api/Solutions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSolution(Guid id, Solution solution)
+        public async Task<IActionResult> PutSolution(long id, Solution solution)
         {
-            if (id != solution.id)
+            if (id != solution.Id)
             {
                 return BadRequest();
             }
@@ -81,12 +81,12 @@ namespace SolutionsService.Controllers
             _context.Solution.Add(solution);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSolution", new { id = solution.id }, solution);
+            return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
         }
 
         // DELETE: api/Solutions/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSolution(Guid id)
+        public async Task<IActionResult> DeleteSolution(long id)
         {
             var solution = await _context.Solution.FindAsync(id);
             if (solution == null)
@@ -100,9 +100,9 @@ namespace SolutionsService.Controllers
             return NoContent();
         }
 
-        private bool SolutionExists(Guid id)
+        private bool SolutionExists(long id)
         {
-            return _context.Solution.Any(e => e.id == id);
+            return _context.Solution.Any(e => e.Id == id);
         }
     }
 }
