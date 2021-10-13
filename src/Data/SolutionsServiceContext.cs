@@ -14,6 +14,7 @@ namespace SolutionsService.Data
         {
         }
 
-        public DbSet<SolutionsService.Models.Solution> Solution { get; set; }
+        public DbSet<Solution> Solution { get; set; }
+        public DbSet<SDG> SDG { get; set; }
     }
 }
