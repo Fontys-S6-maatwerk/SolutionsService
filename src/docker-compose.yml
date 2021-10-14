@@ -1,0 +1,27 @@
+﻿version: '3.8'
+services:
+
+  solution-service: 
+    build: 
+      context: "."
+      dockerfile: "Dockerfile"
+    hostname: solution-service
+    container_name: solution-service
+    ports:
+      - "5000:80"
+    restart: always
+    environment:
+      "PUBLIC_PORT": "80"
+
+  ocelot-gateway:
+    build:
+      context: "../../GGCGateWay/GGCGateWay"
+      dockerfile: "Dockerfile"
+    hostname: ocelot-gateway
+    container_name: ocelot-gateway
+    ports:
+      - "5011:80"
+    links:
+      - solution-service
+    depends_on:
+      - solution-service
