@@ -8,10 +8,10 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["SolutionsService.csproj", "."]
-RUN dotnet restore "./SolutionsService.csproj"
+RUN dotnet restore "SolutionsService.csproj"
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "SolutionsService.csproj" -c Release -o /app/build
