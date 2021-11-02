@@ -12,6 +12,8 @@ services:
     restart: always
     environment:
       "PUBLIC_PORT": "80"
+    depends_on:
+      - db-solution      
 
   ocelot-gateway:
     build:
@@ -30,15 +32,18 @@ services:
     image: mysql:latest
     restart: always
     environment:
-      MYSQL_DATABASE: "db-solution"
+      MYSQL_DATABASE: "solutions"
       MYSQL_USER: "mysql"
       MYSQL_PASSWORD: "informationdashboard"
       MYSQL_ROOT_PASSWORD: "informationdashboard"
     ports:
       - "3306:3306"
+    security_opt:
+      - seccomp:unconfined      
     expose:
       - "3306"
     volumes:
       - db-solution:/var/lib/mysql
+      - /scripts:/docker-entrypoint-initdb.d
 volumes:
   db-solution:
