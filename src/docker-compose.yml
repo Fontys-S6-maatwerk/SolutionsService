@@ -25,3 +25,20 @@ services:
       - solution-service
     depends_on:
       - solution-service
+
+  db-solution:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: "db-solution"
+      MYSQL_USER: "mysql"
+      MYSQL_PASSWORD: "informationdashboard"
+      MYSQL_ROOT_PASSWORD: "informationdashboard"
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - db-solution:/var/lib/mysql
+volumes:
+  db-solution:
