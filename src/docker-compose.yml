@@ -13,7 +13,7 @@ services:
     environment:
       "PUBLIC_PORT": "80"
     depends_on:
-      - db-solution      
+      - db-mssql      
 
   ocelot-gateway:
     build:
@@ -28,22 +28,16 @@ services:
     depends_on:
       - solution-service
 
-  db-solution:
-    image: mysql:latest
-    restart: always
+  db-mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest 
+    user: root
+    container_name: db-mssql
     environment:
-      MYSQL_DATABASE: "solutions"
-      MYSQL_USER: "mysql"
-      MYSQL_PASSWORD: "informationdashboard"
-      MYSQL_ROOT_PASSWORD: "informationdashboard"
+     - ACCEPT_EULA=Y
+     - SA_PASSWORD=informationDashboard1
     ports:
-      - "3306:3306"
-    security_opt:
-      - seccomp:unconfined      
-    expose:
-      - "3306"
+     - "1433:1433"
     volumes:
-      - db-solution:/var/lib/mysql
-      - /scripts:/docker-entrypoint-initdb.d
+     - db-mssql:/var/opt/mssql/data
 volumes:
-  db-solution:
+  db-mssql:
