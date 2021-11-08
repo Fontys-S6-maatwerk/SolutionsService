@@ -12,6 +12,7 @@ namespace SolutionsService.Data
         public SolutionsServiceContext (DbContextOptions<SolutionsServiceContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<Solution> Solution { get; set; }
