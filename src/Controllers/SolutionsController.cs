@@ -87,7 +87,7 @@ namespace SolutionsService.Controllers
         // PUT: api/Solutions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSolution(long id, Solution solution)
+        public async Task<IActionResult> PutSolution(Guid id, Solution solution)
         {
             if (id != solution.Id)
             {
@@ -177,7 +177,7 @@ namespace SolutionsService.Controllers
             return new OkResult();
         }
 
-        private bool SolutionExists(long id)
+        private bool SolutionExists(Guid id)
         {
             return _context.Solution.Any(e => e.Id == id);
         }
