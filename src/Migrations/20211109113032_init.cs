@@ -11,10 +11,9 @@ namespace SolutionsService.Migrations
                 name: "SDG",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SDGNumber = table.Column<long>(type: "bigint", nullable: false)
+                    SDGNumber = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -25,8 +24,7 @@ namespace SolutionsService.Migrations
                 name: "Solution",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     WeatherExtreme = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SolutionType = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -36,7 +34,7 @@ namespace SolutionsService.Migrations
                     Difficulty = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImpactGoal = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CurrentImpact = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AuthorId = table.Column<long>(type: "bigint", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UploadDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ViewCount = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -46,11 +44,30 @@ namespace SolutionsService.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Like",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SolutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Like", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Like_Solution_SolutionId",
+                        column: x => x.SolutionId,
+                        principalTable: "Solution",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SDGSolution",
                 columns: table => new
                 {
-                    SDGsId = table.Column<long>(type: "bigint", nullable: false),
-                    SolutionsId = table.Column<long>(type: "bigint", nullable: false)
+                    SDGsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SolutionsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,6 +87,11 @@ namespace SolutionsService.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Like_SolutionId",
+                table: "Like",
+                column: "SolutionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SDGSolution_SolutionsId",
                 table: "SDGSolution",
                 column: "SolutionsId");
@@ -77,6 +99,9 @@ namespace SolutionsService.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Like");
+
             migrationBuilder.DropTable(
                 name: "SDGSolution");
 

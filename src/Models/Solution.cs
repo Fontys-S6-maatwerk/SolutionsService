@@ -16,7 +16,7 @@ namespace SolutionsService.Models
         }
 
         [Key]
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string WeatherExtreme { get; set; }
         public string SolutionType { get; set; }
@@ -27,7 +27,7 @@ namespace SolutionsService.Models
         public string Difficulty { get; set; }
         public string ImpactGoal { get; set; }
         public int CurrentImpact { get; set; }
-        public long AuthorId { get; set; }
+        public Guid AuthorId { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime UploadDate { get; set; }
         public long ViewCount { get; set; }
