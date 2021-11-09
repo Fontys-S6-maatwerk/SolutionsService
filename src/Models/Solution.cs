@@ -26,7 +26,7 @@ namespace SolutionsService.Models
         public string Content { get; set; }
         public string Difficulty { get; set; }
         public string ImpactGoal { get; set; }
-        public string CurrentImpact { get; set; }
+        public int CurrentImpact { get; set; }
         public long AuthorId { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime UploadDate { get; set; }

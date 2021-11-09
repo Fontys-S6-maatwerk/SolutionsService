@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SolutionsService.Data;
+using SolutionsService.Helpers;
 using SolutionsService.Models;
+using SolutionsService.Parameters;
 
 namespace SolutionsService.Controllers
 {
@@ -23,9 +26,48 @@ namespace SolutionsService.Controllers
 
         // GET: api/Solutions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Solution>>> GetSolution()
-        {
-            return await _context.Solution.ToListAsync();
+        public ActionResult<IEnumerable<Solution>> GetSolution([FromQuery] SolutionParameters solutionParameters)
+        { 
+            var solutions = _context.Solution.Where(s =>
+                s.CurrentImpact >= solutionParameters.MinimumImpact &&
+                s.ViewCount >= solutionParameters.MimimalViewCount &&
+                s.Likes.Count >= solutionParameters.MinimalAmountOfLikes);
+            
+            if(!string.IsNullOrEmpty(solutionParameters.WeatherExtreme))
+            {
+                solutions = solutions.Where(s => s.WeatherExtreme == solutionParameters.WeatherExtreme);
+            }
+            
+            if(!string.IsNullOrEmpty(solutionParameters.SDG))
+            {
+                solutions = solutions.Where(s => s.SDGs.Contains(_context.SDG.FirstOrDefault(sdg => sdg.Name == solutionParameters.SDG)));
+            }
+            
+            if(!string.IsNullOrEmpty(solutionParameters.Difficulty))
+            {
+                solutions = solutions.Where(s => s.Difficulty == solutionParameters.Difficulty);
+            }
+            
+            if(!solutionParameters.AuthorId.Equals(null))
+            {
+                solutions = solutions.Where(s => s.AuthorId.Equals(solutionParameters.AuthorId)).AsQueryable();
+            }
+
+            var pagedSolutions = PagedList<Solution>.ToPagedList(solutions, solutionParameters.PageNumber, solutionParameters.PageSize);
+
+            var metadata = new
+            {
+                pagedSolutions.TotalCount,
+                pagedSolutions.PageSize,
+                pagedSolutions.CurrentPage,
+                pagedSolutions.TotalPages,
+                pagedSolutions.HasNext,
+                pagedSolutions.HasPrevious
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(pagedSolutions);
         }
 
         // GET: api/Solutions/5
