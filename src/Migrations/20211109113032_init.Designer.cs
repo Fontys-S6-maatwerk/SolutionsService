@@ -10,7 +10,7 @@ using SolutionsService.Data;
 namespace SolutionsService.Migrations
 {
     [DbContext(typeof(SolutionsServiceContext))]
-    [Migration("20211013085105_init")]
+    [Migration("20211109113032_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,11 +23,11 @@ namespace SolutionsService.Migrations
 
             modelBuilder.Entity("SDGSolution", b =>
                 {
-                    b.Property<long>("SDGsId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("SDGsId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("SolutionsId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("SolutionsId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("SDGsId", "SolutionsId");
 
@@ -36,18 +36,36 @@ namespace SolutionsService.Migrations
                     b.ToTable("SDGSolution");
                 });
 
+            modelBuilder.Entity("SolutionsService.Models.Like", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SolutionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SolutionId");
+
+                    b.ToTable("Like");
+                });
+
             modelBuilder.Entity("SolutionsService.Models.SDG", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("SDGNumber")
-                        .HasColumnType("bigint");
+                    b.Property<int>("SDGNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -56,13 +74,12 @@ namespace SolutionsService.Migrations
 
             modelBuilder.Entity("SolutionsService.Models.Solution", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("AuthorId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -115,6 +132,20 @@ namespace SolutionsService.Migrations
                         .HasForeignKey("SolutionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SolutionsService.Models.Like", b =>
+                {
+                    b.HasOne("SolutionsService.Models.Solution", "Solution")
+                        .WithMany("Likes")
+                        .HasForeignKey("SolutionId");
+
+                    b.Navigation("Solution");
+                });
+
+            modelBuilder.Entity("SolutionsService.Models.Solution", b =>
+                {
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }
