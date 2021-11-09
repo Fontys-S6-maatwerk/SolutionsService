@@ -4,6 +4,9 @@
 #For more information, please see https://aka.ms/containercompat
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
+ENV ASPNETCORE_ENVIRONMENT="Production"
+ENV ENVIRONMENT="Production"
+
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443

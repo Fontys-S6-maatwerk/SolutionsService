@@ -10,7 +10,9 @@ services:
     ports:
       - "5000:80"
     depends_on:
-      - db-mssql      
+      - sol_db
+    networks: 
+      - ggc-network
 
   ocelot-gateway:
     build:
@@ -22,17 +24,26 @@ services:
       - "5011:80"
     depends_on:
       - solution-service
+    networks: 
+      - ggc-network
 
-  db-mssql:
-    image: mcr.microsoft.com/mssql/server:2019-latest 
-    user: root
-    container_name: db-mssql
-    environment:
-     - ACCEPT_EULA=Y
-     - SA_PASSWORD=informationDashboard1
-    ports:
-     - "1433:1433"
+  sol_db:
+    image: "mcr.microsoft.com/mssql/server"
     volumes:
-     - db-mssql:/var/opt/mssql/data
+      - sol_volume:/var/opt/mssql
+
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    ports:
+     - "1433"
+     - "1001:1433"
+    networks: 
+     - ggc-network
+
 volumes:
-  db-mssql:
+  sol_volume:
+
+networks:
+  ggc-network:
+    external: true
