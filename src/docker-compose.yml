@@ -4,7 +4,7 @@ services:
   solution-service: 
     build: 
       context: "."
-      dockerfile: "Dockerfile"
+      dockerfile: "Dockerfile.local"
     hostname: solution-service
     container_name: solution-service
     ports:
