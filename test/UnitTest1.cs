@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using SolutionsService.Models;
 
 namespace SolutionsTest
 {
@@ -13,6 +14,14 @@ namespace SolutionsTest
         public void Test1()
         {
             Assert.Pass();
+        }
+
+        [Test]
+        public void MakeTestModel()
+        {
+            Solution solution = new Solution();
+
+            Assert.AreNotEqual(solution, null);
         }
     }
 }
