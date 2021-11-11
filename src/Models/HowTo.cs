@@ -18,9 +18,7 @@ namespace SolutionsService.Models
 
         public string Introduction { get; set; }
         public string Difficulty { get; set; }
-        [InverseProperty("Materials")]
         public ICollection<Material> Materials { get; set; }
-        [InverseProperty("Tools")]
         public ICollection<Tool> Tools { get; set; }
         public ICollection<Step> Steps { get; set; }
     }
