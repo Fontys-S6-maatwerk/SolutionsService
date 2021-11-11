@@ -31,6 +31,7 @@ services:
     image: "mcr.microsoft.com/mssql/server"
     volumes:
       - sol_volume:/var/opt/mssql
+    container_name: sol_db
 
     environment:
       SA_PASSWORD: "Your_password123"
