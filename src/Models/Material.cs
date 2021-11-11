@@ -7,11 +7,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SolutionsService.Models
 {
-    public class Like
+    public class Material
     {
         [Key]
         public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-        public virtual Solution Solution { get; set; }
+        public string Name { get; set; }
+        public virtual HowTo Solution { get; set; }
     }
 }

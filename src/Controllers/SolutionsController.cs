@@ -25,14 +25,14 @@ namespace SolutionsService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Solution>>> GetSolution()
         {
-            return await _context.Solution.ToListAsync();
+            return await _context.Solutions.ToListAsync();
         }
 
         // GET: api/Solutions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Solution>> GetSolution(Guid id)
         {
-            var solution = await _context.Solution.FindAsync(id);
+            var solution = await _context.Solutions.FindAsync(id);
 
             if (solution == null)
             {
@@ -78,7 +78,7 @@ namespace SolutionsService.Controllers
         [HttpPost]
         public async Task<ActionResult<Solution>> PostSolution(Solution solution)
         {
-            _context.Solution.Add(solution);
+            _context.Solutions.Add(solution);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
@@ -88,13 +88,13 @@ namespace SolutionsService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSolution(Guid id)
         {
-            var solution = await _context.Solution.FindAsync(id);
+            var solution = await _context.Solutions.FindAsync(id);
             if (solution == null)
             {
                 return NotFound();
             }
 
-            _context.Solution.Remove(solution);
+            _context.Solutions.Remove(solution);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -137,7 +137,7 @@ namespace SolutionsService.Controllers
 
         private bool SolutionExists(Guid id)
         {
-            return _context.Solution.Any(e => e.Id == id);
+            return _context.Solutions.Any(e => e.Id == id);
         }
     }
 }

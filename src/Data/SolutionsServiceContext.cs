@@ -14,7 +14,10 @@ namespace SolutionsService.Data
         {
         }
 
-        public DbSet<Solution> Solution { get; set; }
-        public DbSet<SDG> SDG { get; set; }
+        public DbSet<Solution> Solutions { get; set; }
+        public DbSet<SDG> SDGs { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Material> Materials { get; set; }
+        public DbSet<Step> Steps { get; set; }
     }
 }
