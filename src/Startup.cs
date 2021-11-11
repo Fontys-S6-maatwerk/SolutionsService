@@ -35,13 +35,16 @@ namespace SolutionsService
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SolutionsService", Version = "v1" });
             });
 
-            services.AddDbContext<SolutionsServiceContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("SolutionsServiceContext")));
+            var connection = Configuration.GetConnectionString("SolutionsServiceContext");
+            services.AddDbContextPool<SolutionsServiceContext>(
+                options => options.UseSqlServer(connection));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SolutionsServiceContext context)
         {
+            context.Database.Migrate();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

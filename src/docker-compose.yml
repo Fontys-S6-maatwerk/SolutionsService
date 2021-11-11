@@ -1,0 +1,49 @@
+﻿version: '3.8'
+services:
+
+  solution-service: 
+    build: 
+      context: "."
+      dockerfile: "Dockerfile.local"
+    hostname: solution-service
+    container_name: solution-service
+    ports:
+      - "5000:80"
+    depends_on:
+      - sol_db
+    networks: 
+      - ggc-network
+
+  ocelot-gateway:
+    build:
+      context: "../../GGCGateWay/GGCGateWay"
+      dockerfile: "Dockerfile"
+    hostname: ocelot-gateway
+    container_name: ocelot-gateway
+    ports:
+      - "5011:80"
+    depends_on:
+      - solution-service
+    networks: 
+      - ggc-network
+
+  sol_db:
+    image: "mcr.microsoft.com/mssql/server"
+    volumes:
+      - sol_volume:/var/opt/mssql
+
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    ports:
+     - "1433"
+     - "1001:1433"
+    networks: 
+     - ggc-network
+
+volumes:
+  sol_volume:
+
+networks:
+  ggc-network:
+    external: true

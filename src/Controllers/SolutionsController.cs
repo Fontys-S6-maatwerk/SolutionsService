@@ -30,7 +30,7 @@ namespace SolutionsService.Controllers
 
         // GET: api/Solutions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Solution>> GetSolution(long id)
+        public async Task<ActionResult<Solution>> GetSolution(Guid id)
         {
             var solution = await _context.Solution.FindAsync(id);
 
@@ -45,7 +45,7 @@ namespace SolutionsService.Controllers
         // PUT: api/Solutions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSolution(long id, Solution solution)
+        public async Task<IActionResult> PutSolution(Guid id, Solution solution)
         {
             if (id != solution.Id)
             {
@@ -86,7 +86,7 @@ namespace SolutionsService.Controllers
 
         // DELETE: api/Solutions/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSolution(long id)
+        public async Task<IActionResult> DeleteSolution(Guid id)
         {
             var solution = await _context.Solution.FindAsync(id);
             if (solution == null)
@@ -101,41 +101,41 @@ namespace SolutionsService.Controllers
         }
 
         [HttpPut("{id}/likes/{userId}")]
-        public async Task<IActionResult> LikeSolution(long id, long userId)
+        public async Task<IActionResult> LikeSolution(Guid id, Guid userId)
         {
             //TODO: implement
             return NoContent();
         }
 
         [HttpDelete("{id}/likes/{userId}")]
-        public async Task<IActionResult> UnlikeSolution(long id, long userId)
+        public async Task<IActionResult> UnlikeSolution(Guid id, Guid userId)
         {
             //TODO: implement
             return NoContent();
         }
 
         [HttpGet("user/{id}")]
-        public async Task<IActionResult> GetSolutionsFromAuthor(long id)
+        public async Task<IActionResult> GetSolutionsFromAuthor(Guid id)
         {
             //TODO: implement
             return new OkResult();
         }
 
         [HttpGet("liked/{id}")]
-        public async Task<IActionResult> GetSolutionsLikedByUser(long id)
+        public async Task<IActionResult> GetSolutionsLikedByUser(Guid id)
         {
             //TODO: implement
             return new OkResult();
         }
 
         [HttpGet("followed/{id}")]
-        public async Task<IActionResult> GetSolutionsFollowedByUser(long id)
+        public async Task<IActionResult> GetSolutionsFollowedByUser(Guid id)
         {
             //TODO: implement
             return new OkResult();
         }
 
-        private bool SolutionExists(long id)
+        private bool SolutionExists(Guid id)
         {
             return _context.Solution.Any(e => e.Id == id);
         }

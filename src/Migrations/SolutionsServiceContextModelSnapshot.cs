@@ -21,11 +21,11 @@ namespace SolutionsService.Migrations
 
             modelBuilder.Entity("SDGSolution", b =>
                 {
-                    b.Property<long>("SDGsId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("SDGsId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("SolutionsId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("SolutionsId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("SDGsId", "SolutionsId");
 
@@ -36,16 +36,15 @@ namespace SolutionsService.Migrations
 
             modelBuilder.Entity("SolutionsService.Models.Like", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long?>("SolutionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("SolutionId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -56,16 +55,15 @@ namespace SolutionsService.Migrations
 
             modelBuilder.Entity("SolutionsService.Models.SDG", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("SDGNumber")
-                        .HasColumnType("bigint");
+                    b.Property<int>("SDGNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -74,13 +72,12 @@ namespace SolutionsService.Migrations
 
             modelBuilder.Entity("SolutionsService.Models.Solution", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("AuthorId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");

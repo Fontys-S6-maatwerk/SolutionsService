@@ -14,9 +14,9 @@ namespace SolutionsService.Models
         }
 
         [Key]
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
-        public long SDGNumber { get; set; }
+        public int SDGNumber { get; set; }
         public ICollection<Solution> Solutions { get; set; }
     }
 }

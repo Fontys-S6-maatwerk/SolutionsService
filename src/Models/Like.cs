@@ -10,8 +10,8 @@ namespace SolutionsService.Models
     public class Like
     {
         [Key]
-        public long Id { get; set; }
-        public long UserId { get; set; }
+        public Guid Id { get; set; }
+        public Guid UserId { get; set; }
         public Solution Solution { get; set; }
     }
 }
