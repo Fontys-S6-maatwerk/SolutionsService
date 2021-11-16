@@ -8,12 +8,12 @@ using System.Text.Json.Serialization;
 
 namespace SolutionsService.Models
 {
-    public class Like
+    public class Tool
     {
         [Key]
         public Guid Id { get; set; }
-        public Guid UserId { get; set; }
+        public string Name { get; set; }
         [JsonIgnore]
-        public virtual Solution Solution { get; set; }
+        public virtual HowTo Solution { get; set; }
     }
 }

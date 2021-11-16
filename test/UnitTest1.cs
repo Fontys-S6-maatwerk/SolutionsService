@@ -19,7 +19,7 @@ namespace SolutionsTest
         [Test]
         public void MakeTestModel()
         {
-            Solution solution = new Solution();
+            Solution solution = new Article();
 
             Assert.AreNotEqual(solution, null);
         }
