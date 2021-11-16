@@ -72,9 +72,9 @@ namespace SolutionsService.Controllers
 
         // GET: api/Solutions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Solution>> GetSolution(long id)
+        public async Task<ActionResult<Solution>> GetSolution(Guid id)
         {
-            var solution = await _context.Solution.FindAsync(id);
+            var solution = await _context.Solutions.FindAsync(id);
 
             if (solution == null)
             {
@@ -115,12 +115,23 @@ namespace SolutionsService.Controllers
             return NoContent();
         }
 
-        // POST: api/Solutions
+        // POST: api/Solutions/article
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Solution>> PostSolution(Solution solution)
+        [HttpPost("article")]
+        public async Task<ActionResult<Solution>> PostArticle(Article solution)
         {
-            _context.Solution.Add(solution);
+            _context.Solutions.Add(solution);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
+        }
+
+        // POST: api/Solutions/howto
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("howto")]
+        public async Task<ActionResult<Solution>> PostHowTo(HowTo solution)
+        {
+            _context.Solutions.Add(solution);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
@@ -128,50 +139,50 @@ namespace SolutionsService.Controllers
 
         // DELETE: api/Solutions/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSolution(long id)
+        public async Task<IActionResult> DeleteSolution(Guid id)
         {
-            var solution = await _context.Solution.FindAsync(id);
+            var solution = await _context.Solutions.FindAsync(id);
             if (solution == null)
             {
                 return NotFound();
             }
 
-            _context.Solution.Remove(solution);
+            _context.Solutions.Remove(solution);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpPut("{id}/likes/{userId}")]
-        public async Task<IActionResult> LikeSolution(long id, long userId)
+        public async Task<IActionResult> LikeSolution(Guid id, Guid userId)
         {
             //TODO: implement
             return NoContent();
         }
 
         [HttpDelete("{id}/likes/{userId}")]
-        public async Task<IActionResult> UnlikeSolution(long id, long userId)
+        public async Task<IActionResult> UnlikeSolution(Guid id, Guid userId)
         {
             //TODO: implement
             return NoContent();
         }
 
         [HttpGet("user/{id}")]
-        public async Task<IActionResult> GetSolutionsFromAuthor(long id)
+        public async Task<IActionResult> GetSolutionsFromAuthor(Guid id)
         {
             //TODO: implement
             return new OkResult();
         }
 
         [HttpGet("liked/{id}")]
-        public async Task<IActionResult> GetSolutionsLikedByUser(long id)
+        public async Task<IActionResult> GetSolutionsLikedByUser(Guid id)
         {
             //TODO: implement
             return new OkResult();
         }
 
         [HttpGet("followed/{id}")]
-        public async Task<IActionResult> GetSolutionsFollowedByUser(long id)
+        public async Task<IActionResult> GetSolutionsFollowedByUser(Guid id)
         {
             //TODO: implement
             return new OkResult();
@@ -179,7 +190,7 @@ namespace SolutionsService.Controllers
 
         private bool SolutionExists(Guid id)
         {
-            return _context.Solution.Any(e => e.Id == id);
+            return _context.Solutions.Any(e => e.Id == id);
         }
     }
 }
