@@ -18,8 +18,8 @@ namespace SolutionsService.Models
 
         public string Introduction { get; set; }
         public string Difficulty { get; set; }
-        public ICollection<Material> Materials { get; set; }
-        public ICollection<Tool> Tools { get; set; }
-        public ICollection<Step> Steps { get; set; }
+        public virtual ICollection<Material> Materials { get; set; }
+        public virtual ICollection<Tool> Tools { get; set; }
+        public virtual ICollection<Step> Steps { get; set; }
     }
 }
