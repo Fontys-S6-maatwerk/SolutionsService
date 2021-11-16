@@ -73,10 +73,21 @@ namespace SolutionsService.Controllers
             return NoContent();
         }
 
-        // POST: api/Solutions
+        // POST: api/Solutions/article
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Solution>> PostSolution(Solution solution)
+        [HttpPost("article")]
+        public async Task<ActionResult<Solution>> PostArticle(Article solution)
+        {
+            _context.Solutions.Add(solution);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
+        }
+
+        // POST: api/Solutions/howto
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("howto")]
+        public async Task<ActionResult<Solution>> PostHowTo(HowTo solution)
         {
             _context.Solutions.Add(solution);
             await _context.SaveChangesAsync();

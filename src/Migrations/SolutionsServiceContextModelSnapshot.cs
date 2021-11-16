@@ -101,10 +101,6 @@ namespace SolutionsService.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("HeaderImageURL")
                         .HasColumnType("nvarchar(max)");
 
@@ -126,8 +122,6 @@ namespace SolutionsService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Solutions");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Solution");
                 });
 
             modelBuilder.Entity("SolutionsService.Models.Step", b =>
@@ -158,17 +152,27 @@ namespace SolutionsService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("HowToId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("SolutionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("HowToId");
+                    b.HasIndex("SolutionId");
 
                     b.ToTable("Tools");
+                });
+
+            modelBuilder.Entity("SolutionsService.Models.Article", b =>
+                {
+                    b.HasBaseType("SolutionsService.Models.Solution");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Articles");
                 });
 
             modelBuilder.Entity("SolutionsService.Models.HowTo", b =>
@@ -181,7 +185,7 @@ namespace SolutionsService.Migrations
                     b.Property<string>("Introduction")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("HowTo");
+                    b.ToTable("HowTos");
                 });
 
             modelBuilder.Entity("SDGSolution", b =>
@@ -228,9 +232,29 @@ namespace SolutionsService.Migrations
 
             modelBuilder.Entity("SolutionsService.Models.Tool", b =>
                 {
-                    b.HasOne("SolutionsService.Models.HowTo", null)
+                    b.HasOne("SolutionsService.Models.HowTo", "Solution")
                         .WithMany("Tools")
-                        .HasForeignKey("HowToId");
+                        .HasForeignKey("SolutionId");
+
+                    b.Navigation("Solution");
+                });
+
+            modelBuilder.Entity("SolutionsService.Models.Article", b =>
+                {
+                    b.HasOne("SolutionsService.Models.Solution", null)
+                        .WithOne()
+                        .HasForeignKey("SolutionsService.Models.Article", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SolutionsService.Models.HowTo", b =>
+                {
+                    b.HasOne("SolutionsService.Models.Solution", null)
+                        .WithOne()
+                        .HasForeignKey("SolutionsService.Models.HowTo", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SolutionsService.Models.Solution", b =>

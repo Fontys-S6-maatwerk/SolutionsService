@@ -22,8 +22,4 @@
     <ProjectReference Include="..\src\SolutionsService.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\ResponseModels\" />
-  </ItemGroup>
-
 </Project>
