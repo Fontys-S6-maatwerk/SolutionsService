@@ -9,7 +9,7 @@ namespace SolutionsService.Models
 {
     public class HowTo : Solution
     {
-        public HowTo()
+        public HowTo() : base()
         {
             this.Materials = new HashSet<Material>();
             this.Tools = new HashSet<Tool>();
