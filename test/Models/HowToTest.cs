@@ -58,7 +58,26 @@ namespace SolutionsTest.Models
                 Steps = steps
             };
 
-            Assert.IsTrue(true);
+            Assert.NotNull(art.Id);
+            Assert.NotNull(art.AuthorId);
+            Assert.IsTrue(art.Id != art.AuthorId);
+
+            Assert.AreEqual("Artikel 1", art.Name);
+            Assert.AreEqual("Regen", art.WeatherExtreme);
+            Assert.AreEqual("image.png", art.HeaderImageURL);
+            Assert.AreEqual("Omschrijving", art.Description);
+            Assert.AreEqual("makkelijk", art.Difficulty);
+            Assert.AreEqual("Intro", art.Introduction);
+            Assert.AreEqual(123, art.ViewCount);
+
+            Assert.IsTrue(art.UploadDate < DateTime.Now);
+            Assert.IsTrue(art.LastUpdatedTime < DateTime.Now);
+
+            Assert.NotNull(art.SDGs);
+            Assert.NotNull(art.Likes);
+            Assert.NotNull(art.Tools);
+            Assert.NotNull(art.Materials);
+            Assert.NotNull(art.Steps);
         }
     }
 }
