@@ -28,8 +28,7 @@ namespace SolutionsService.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Solution>> GetSolution([FromQuery] SolutionParameters solutionParameters)
         { 
-            var solutions = _context.Solution.Where(s =>
-                s.CurrentImpact >= solutionParameters.MinimumImpact &&
+            var solutions = _context.Solutions.Where(s =>
                 s.ViewCount >= solutionParameters.MimimalViewCount &&
                 s.Likes.Count >= solutionParameters.MinimalAmountOfLikes);
             
@@ -40,12 +39,7 @@ namespace SolutionsService.Controllers
             
             if(!string.IsNullOrEmpty(solutionParameters.SDG))
             {
-                solutions = solutions.Where(s => s.SDGs.Contains(_context.SDG.FirstOrDefault(sdg => sdg.Name == solutionParameters.SDG)));
-            }
-            
-            if(!string.IsNullOrEmpty(solutionParameters.Difficulty))
-            {
-                solutions = solutions.Where(s => s.Difficulty == solutionParameters.Difficulty);
+                solutions = solutions.Where(s => s.SDGs.Contains(_context.SDGs.FirstOrDefault(sdg => sdg.Name == solutionParameters.SDG)));
             }
             
             if(!solutionParameters.AuthorId.Equals(Guid.Empty))
