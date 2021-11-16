@@ -9,6 +9,10 @@ namespace SolutionsService.Models
 {
     public class Article : Solution
     {
+        public Article() : base()
+        {
+        }
+
         public string Content { get; set; }
     }
 }

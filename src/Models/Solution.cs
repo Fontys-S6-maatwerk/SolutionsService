@@ -9,7 +9,7 @@ namespace SolutionsService.Models
 {
     public abstract class Solution
     {
-        public Solution()
+        protected Solution()
         {
             this.SDGs = new HashSet<SDG>();
             this.Likes = new HashSet<Like>();
