@@ -21,6 +21,7 @@ namespace SolutionsService.Data
         public DbSet<Tool> Tools { get; set; }
         public DbSet<Step> Steps { get; set; }
         public DbSet<Solution> Solutions { get; set; }
+        public DbSet<SDGSolution> SDGSolutions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,6 +33,9 @@ namespace SolutionsService.Data
             modelBuilder.Entity<Tool>().ToTable("Tools");
             modelBuilder.Entity<Step>().ToTable("Steps");
             modelBuilder.Entity<Solution>().ToTable("Solutions");
+
+            modelBuilder.Entity<SDGSolution>().HasKey(i => new { i.SDGId, i.SolutionId });
+            modelBuilder.Entity<SDGSolution>().ToTable("SDGSolutions");
         }
     }
 }

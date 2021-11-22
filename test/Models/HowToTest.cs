@@ -19,9 +19,12 @@ namespace SolutionsTest.Models
         [Test]
         public void PropertiesTest()
         {
-            List<SDG> sdgs = new List<SDG>()
+            List<SDGSolution> sdgs = new List<SDGSolution>()
             {
-                new SDG(){Id = Guid.NewGuid(), SDGNumber = 1, Name = "De eerste" }
+                new SDGSolution(){
+                    SDG = new SDG(){Id = Guid.NewGuid(), SDGNumber = 1, Name = "De eerste" },
+                    SDGId = Guid.NewGuid()
+                }
             };
 
             List<Material> materials = new List<Material>()
