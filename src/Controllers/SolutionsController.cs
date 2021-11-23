@@ -42,6 +42,20 @@ namespace SolutionsService.Controllers
             return solution;
         }
 
+        // GET: api/Solutions/SDG/id
+        [HttpGet("id")]
+        public async Task<ActionResult<IEnumerable<Solution>>> GetSDGSolutions(int id){
+
+            var solutions = await _context.Solutions.Where(e => e.SDGs.Any(l => l.SDGNumber == id)).ToListAsync();
+
+             if (solutions == null)
+            {
+                return NotFound();
+            }
+
+            return solutions;
+        }
+
         // PUT: api/Solutions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
