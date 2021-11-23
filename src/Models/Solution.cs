@@ -11,7 +11,7 @@ namespace SolutionsService.Models
     {
         protected Solution()
         {
-            this.SDGs = new HashSet<SDG>();
+            this.SDGs = new HashSet<SDGSolution>();
             this.Likes = new HashSet<Like>();
         }
 
@@ -27,7 +27,7 @@ namespace SolutionsService.Models
         [Column(TypeName = "datetime2")]
         public DateTime LastUpdatedTime { get; set; }
         public int ViewCount { get; set; }
-        public virtual ICollection<SDG> SDGs { get; set; }
+        public virtual ICollection<SDGSolution> SDGs { get; set; }
         public virtual ICollection<Like> Likes { get; set; }
     }
 }
