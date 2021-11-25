@@ -10,7 +10,7 @@ using SolutionsService.Data;
 namespace SolutionsService.Migrations
 {
     [DbContext(typeof(SolutionsServiceContext))]
-    [Migration("20211116100655_init")]
+    [Migration("20211125105117_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,21 +20,6 @@ namespace SolutionsService.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("SDGSolution", b =>
-                {
-                    b.Property<Guid>("SDGsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SolutionsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SDGsId", "SolutionsId");
-
-                    b.HasIndex("SolutionsId");
-
-                    b.ToTable("SDGSolution");
-                });
 
             modelBuilder.Entity("SolutionsService.Models.Like", b =>
                 {
@@ -89,6 +74,21 @@ namespace SolutionsService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SDGs");
+                });
+
+            modelBuilder.Entity("SolutionsService.Models.SDGSolution", b =>
+                {
+                    b.Property<Guid>("SDGId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SolutionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("SDGId", "SolutionId");
+
+                    b.HasIndex("SolutionId");
+
+                    b.ToTable("SDGSolutions");
                 });
 
             modelBuilder.Entity("SolutionsService.Models.Solution", b =>
@@ -190,21 +190,6 @@ namespace SolutionsService.Migrations
                     b.ToTable("HowTos");
                 });
 
-            modelBuilder.Entity("SDGSolution", b =>
-                {
-                    b.HasOne("SolutionsService.Models.SDG", null)
-                        .WithMany()
-                        .HasForeignKey("SDGsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SolutionsService.Models.Solution", null)
-                        .WithMany()
-                        .HasForeignKey("SolutionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SolutionsService.Models.Like", b =>
                 {
                     b.HasOne("SolutionsService.Models.Solution", "Solution")
@@ -219,6 +204,25 @@ namespace SolutionsService.Migrations
                     b.HasOne("SolutionsService.Models.HowTo", "Solution")
                         .WithMany("Materials")
                         .HasForeignKey("SolutionId");
+
+                    b.Navigation("Solution");
+                });
+
+            modelBuilder.Entity("SolutionsService.Models.SDGSolution", b =>
+                {
+                    b.HasOne("SolutionsService.Models.SDG", "SDG")
+                        .WithMany("Solutions")
+                        .HasForeignKey("SDGId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SolutionsService.Models.Solution", "Solution")
+                        .WithMany("SDGs")
+                        .HasForeignKey("SolutionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SDG");
 
                     b.Navigation("Solution");
                 });
@@ -259,9 +263,16 @@ namespace SolutionsService.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SolutionsService.Models.SDG", b =>
+                {
+                    b.Navigation("Solutions");
+                });
+
             modelBuilder.Entity("SolutionsService.Models.Solution", b =>
                 {
                     b.Navigation("Likes");
+
+                    b.Navigation("SDGs");
                 });
 
             modelBuilder.Entity("SolutionsService.Models.HowTo", b =>
