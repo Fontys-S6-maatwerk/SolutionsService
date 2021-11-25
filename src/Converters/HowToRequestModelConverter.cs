@@ -15,6 +15,8 @@ namespace SolutionsService.Converters
             {
                 Name = requestModel.Name,
                 WeatherExtreme = requestModel.WeatherExtreme,
+                Difficulty = requestModel.Difficulty,
+                Introduction = requestModel.Introduction,
                 HeaderImageURL = requestModel.HeaderImageUrl,
                 Description = requestModel.Description,
                 AuthorId = requestModel.AuthorId,

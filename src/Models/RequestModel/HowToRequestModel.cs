@@ -7,6 +7,13 @@ namespace SolutionsService.Models.RequestModel
 {
     public class HowToRequestModel : SolutionRequestModel
     {
+        public HowToRequestModel()
+        {
+            Steps = new List<StepRequestModel>();
+            Materials = new List<string>();
+            Tools = new List<string>();
+        }
+
         public string Introduction { get; set; }
         public string Difficulty { get; set; }
         public List<string> Tools { get; set; }

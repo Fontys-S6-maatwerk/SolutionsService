@@ -7,6 +7,11 @@ namespace SolutionsService.Models.RequestModel
 {
     public abstract class SolutionRequestModel
     {
+        public SolutionRequestModel()
+        {
+            SDGIds = new List<Guid>();
+        }
+
         public string Name { get; set; }
         public string WeatherExtreme { get; set; }
         public string HeaderImageUrl { get; set; }
