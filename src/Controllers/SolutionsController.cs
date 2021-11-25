@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SolutionsService.Converters;
 using SolutionsService.Data;
 using SolutionsService.Models;
+using SolutionsService.Models.RequestModel;
 
 namespace SolutionsService.Controllers
 {
@@ -76,22 +78,56 @@ namespace SolutionsService.Controllers
         // POST: api/Solutions/article
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("article")]
-        public async Task<ActionResult<Solution>> PostArticle(Article solution)
+        public async Task<ActionResult<Solution>> PostArticle(ArticleRequestModel article)
         {
-            _context.Solutions.Add(solution);
+            //convert to datamodel
+            Article dataModel = ArticleRequestModelConverter.ConvertReqModelToDataModel(article);
+
+            //check existence of SDGs
+            foreach(var item in dataModel.SDGs)
+            {
+                if (!SDGExists(item.SDGId))
+                {
+                    return NotFound();
+                }
+            }
+
+            //ensure many to many relationship is properly defined
+            await PopulateManyToManySDGs(dataModel);
+
+            //save entity
+            _context.Solutions.Add(dataModel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
+            //return http response
+            return CreatedAtAction("GetSolution", new { id = dataModel.Id }, dataModel);
         }
 
         // POST: api/Solutions/howto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("howto")]
-        public async Task<ActionResult<Solution>> PostHowTo(HowTo solution)
+        public async Task<ActionResult<Solution>> PostHowTo(HowToRequestModel howTo)
         {
-            _context.Solutions.Add(solution);
+            //convert to datamodel
+            HowTo dataModel = HowToRequestModelConverter.ConvertReqModelToDataModel(howTo);
+
+            //check existence of SDGs
+            foreach (var item in dataModel.SDGs)
+            {
+                if (!SDGExists(item.SDGId))
+                {
+                    return NotFound();
+                }
+            }
+
+            //ensure many to many relationships are properly defined
+            await PopulateManyToManySDGs(dataModel);
+
+            //save entity
+            _context.Solutions.Add(dataModel);
             await _context.SaveChangesAsync();
 
+            //return http response
             return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
         }
 
@@ -149,6 +185,24 @@ namespace SolutionsService.Controllers
         private bool SolutionExists(Guid id)
         {
             return _context.Solutions.Any(e => e.Id == id);
+        }
+
+        private bool SDGExists(Guid id)
+        {
+            return _context.SDGs.Any(e => e.Id == id);
+        }
+
+        private async Task<Solution> PopulateManyToManySDGs(Solution solution)
+        {
+            List<SDG> sdgEntities = new List<SDG>();
+
+            foreach (var item in solution.SDGs)
+            {
+                SDG sdg = await _context.SDGs.FindAsync(item.SDGId);
+                item.SDG = sdg;
+            }
+
+            return solution;
         }
     }
 }
