@@ -128,7 +128,7 @@ namespace SolutionsService.Controllers
             await _context.SaveChangesAsync();
 
             //return http response
-            return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
+            return CreatedAtAction("GetSolution", new { id = dataModel.Id }, dataModel);
         }
 
         // DELETE: api/Solutions/5
