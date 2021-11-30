@@ -28,14 +28,31 @@ namespace SolutionsService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Solution>>> GetSolution()
         {
-            return await _context.Solutions.ToListAsync();
+            List<Solution> solutions = await _context.Solutions.Include(solution => solution.SDGs).ToListAsync();
+
+            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
+            foreach(var solution in solutions)
+            {
+                foreach (SDGSolution sdg in solution.SDGs)
+                {
+                    await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
+                }
+            }
+
+            return solutions;
         }
 
         // GET: api/Solutions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Solution>> GetSolution(Guid id)
         {
-            var solution = await _context.Solutions.FindAsync(id);
+            var solution = await _context.Solutions.Include(solution => solution.SDGs).FirstOrDefaultAsync(x => x.Id == id);
+
+            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
+            foreach (SDGSolution sdg in solution.SDGs)
+            {
+                await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
+            }
 
             if (solution == null)
             {

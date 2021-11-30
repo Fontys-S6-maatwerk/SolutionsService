@@ -24,12 +24,14 @@ namespace SolutionsService.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SDG>> PostSDG(SDG sdg)
+        public async Task<ActionResult<SDG>> PostSDG(SDGRequestModel sdg)
         {
-            _context.SDGs.Add(sdg);
+            SDG dataModel = SDGRequestModelConverter.ConvertReqModelToDataModel(sdg);
+
+            _context.SDGs.Add(dataModel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSDG", new { id = sdg.Id }, sdg);
+            return CreatedAtAction("GetSDG", new { id = dataModel.Id }, dataModel);
         }
 
         [HttpGet]
