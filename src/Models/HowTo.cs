@@ -9,8 +9,10 @@ namespace SolutionsService.Models
 {
     public class HowTo : Solution
     {
-        public HowTo() : base()
+        public HowTo()
         {
+            this.SDGs = new HashSet<SDGSolution>();
+            this.Likes = new HashSet<Like>();
             this.Materials = new HashSet<Material>();
             this.Tools = new HashSet<Tool>();
             this.Steps = new HashSet<Step>();

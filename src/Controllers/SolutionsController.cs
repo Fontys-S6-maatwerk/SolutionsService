@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolutionsService.Converters;
@@ -14,6 +14,7 @@ namespace SolutionsService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("ggcPolicy")]
     public class SolutionsController : ControllerBase
     {
         private readonly SolutionsServiceContext _context;
@@ -27,14 +28,31 @@ namespace SolutionsService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Solution>>> GetSolution()
         {
-            return await _context.Solutions.ToListAsync();
+            List<Solution> solutions = await _context.Solutions.Include(solution => solution.SDGs).ToListAsync();
+
+            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
+            foreach (var solution in solutions)
+            {
+                foreach (SDGSolution sdg in solution.SDGs)
+                {
+                    await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
+                }
+            }
+
+            return solutions;
         }
 
         // GET: api/Solutions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Solution>> GetSolution(Guid id)
         {
-            var solution = await _context.Solutions.FindAsync(id);
+            var solution = await _context.Solutions.Include(solution => solution.SDGs).FirstOrDefaultAsync(x => x.Id == id);
+
+            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
+            foreach (SDGSolution sdg in solution.SDGs)
+            {
+                await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
+            }
 
             if (solution == null)
             {
@@ -46,16 +64,28 @@ namespace SolutionsService.Controllers
 
         // GET: api/Solutions/SDG
         [HttpGet("sdg")]
-        public async Task<ActionResult<IEnumerable<Solution>>> GetSDGSolutions(Guid id){
+        public async Task<ActionResult<IEnumerable<Solution>>> GetSDGSolutions(Guid id)
+        {
 
-            var solutions = await _context.Solutions.Include(solutions => solutions.SDGs).Where(e => e.SDGs.Any(l => l.SDG.Id == id)).ToListAsync();
+            var solutions = await _context.Solutions.Include(solutions => solutions.SDGs).ToListAsync();
+            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
+            foreach (var solution in solutions)
+            {
+                foreach (SDGSolution sdg in solution.SDGs)
+                {
+                    await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
+ 
+                }
+            }
 
-             if (solutions == null)
+            var SDGSolution = solutions.Where(SDGSolution => SDGSolution.SDGs.Any(sdg => sdg.SDGId == id)).ToList();
+            
+            if (SDGSolution == null)
             {
                 return NotFound();
             }
 
-            return solutions;
+            return SDGSolution;
         }
 
         // PUT: api/Solutions/5
@@ -98,7 +128,7 @@ namespace SolutionsService.Controllers
             Article dataModel = ArticleRequestModelConverter.ConvertReqModelToDataModel(article);
 
             //check existence of SDGs
-            foreach(var item in dataModel.SDGs)
+            foreach (var item in dataModel.SDGs)
             {
                 if (!SDGExists(item.SDGId))
                 {
