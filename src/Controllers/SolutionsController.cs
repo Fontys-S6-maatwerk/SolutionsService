@@ -44,11 +44,11 @@ namespace SolutionsService.Controllers
             return solution;
         }
 
-        // GET: api/Solutions/SDG/id
-        [HttpGet("id")]
-        public async Task<ActionResult<IEnumerable<Solution>>> GetSDGSolutions(int id){
+        // GET: api/Solutions/SDG
+        [HttpGet("sdg")]
+        public async Task<ActionResult<IEnumerable<Solution>>> GetSDGSolutions(Guid id){
 
-            var solutions = await _context.Solutions.Where(e => e.SDGs.Any(l => l.SDGNumber == id)).ToListAsync();
+            var solutions = await _context.Solutions.Include(solutions => solutions.SDGs).Where(e => e.SDGs.Any(l => l.SDG.Id == id)).ToListAsync();
 
              if (solutions == null)
             {
