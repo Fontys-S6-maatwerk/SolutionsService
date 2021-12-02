@@ -42,7 +42,7 @@ namespace SolutionsService.Logic
             response.Difficulty = solution.Difficulty;
             response.Introduction = solution.Introduction;
             response.Materials = solution.Materials.Select(x => x.Name).ToList();
-            response.Tools = solution.Materials.Select(x => x.Name).ToList();
+            response.Tools = solution.Tools.Select(x => x.Name).ToList();
             response.Steps = solution.Steps
                 .Select(x => new StepResponse { Description = x.Description, CoverImage = x.CoverImage })
                 .ToList();
