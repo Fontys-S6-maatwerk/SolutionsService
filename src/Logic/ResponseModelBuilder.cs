@@ -19,7 +19,7 @@ namespace SolutionsService.Logic
             response.Likes = solution.Likes.Count();
             response.Name = solution.Name;
             response.SDGs = solution.SDGs
-                .Select(x => new SDGResponse() { Name = x.SDG.Name, SDGNumber = x.SDG.SDGNumber})
+                .Select(x => BuildSDGResponse(x.SDG))
                 .ToList();
             response.UploadDate = solution.UploadDate;
             response.ViewCount = solution.ViewCount;
@@ -48,6 +48,16 @@ namespace SolutionsService.Logic
                 .ToList();
 
             return response;
+        }
+
+        public static SDGResponse BuildSDGResponse(SDG sdg)
+        {
+            return new SDGResponse()
+            {
+                Id = sdg.Id,
+                Name = sdg.Name,
+                SDGNumber = sdg.SDGNumber
+            };
         }
     }
 }

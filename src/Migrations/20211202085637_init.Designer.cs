@@ -10,7 +10,7 @@ using SolutionsService.Data;
 namespace SolutionsService.Migrations
 {
     [DbContext(typeof(SolutionsServiceContext))]
-    [Migration("20211125105117_init")]
+    [Migration("20211202085637_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

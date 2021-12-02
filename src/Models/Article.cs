@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SolutionsService.Models.ResponseModels;
+using SolutionsService.Logic;
 
 namespace SolutionsService.Models
 {
@@ -16,5 +18,10 @@ namespace SolutionsService.Models
         }
 
         public string Content { get; set; }
+
+        public override ArticleResponse ConvertToResponseModel()
+        {
+            return ResponseModelBuilder.BuildArticleResponse(this);
+        }
     }
 }
