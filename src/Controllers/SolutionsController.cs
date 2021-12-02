@@ -9,6 +9,7 @@ using SolutionsService.Converters;
 using SolutionsService.Data;
 using SolutionsService.Models;
 using SolutionsService.Models.RequestModel;
+using SolutionsService.Models.ResponseModels;
 
 namespace SolutionsService.Controllers
 {
@@ -26,7 +27,7 @@ namespace SolutionsService.Controllers
 
         // GET: api/Solutions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Solution>>> GetSolution()
+        public async Task<ActionResult<IEnumerable<SolutionResponse>>> GetSolution()
         {
             List<Solution> solutions = await _context.Solutions.Include(solution => solution.SDGs).ToListAsync();
 
@@ -39,12 +40,19 @@ namespace SolutionsService.Controllers
                 }
             }
 
-            return solutions;
+            List<SolutionResponse> response = new List<SolutionResponse>();
+
+            foreach(var item in solutions)
+            {
+                response.Add(item.ConvertToResponseModel());
+            }
+
+            return response;
         }
 
         // GET: api/Solutions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Solution>> GetSolution(Guid id)
+        public async Task<ActionResult<SolutionResponse>> GetSolution(Guid id)
         {
             var solution = await _context.Solutions.Include(solution => solution.SDGs).FirstOrDefaultAsync(x => x.Id == id);
 
@@ -59,7 +67,7 @@ namespace SolutionsService.Controllers
                 return NotFound();
             }
 
-            return solution;
+            return solution.ConvertToResponseModel();
         }
 
         // PUT: api/Solutions/5
@@ -96,7 +104,7 @@ namespace SolutionsService.Controllers
         // POST: api/Solutions/article
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("article")]
-        public async Task<ActionResult<Solution>> PostArticle(ArticleRequestModel article)
+        public async Task<ActionResult<SolutionResponse>> PostArticle(ArticleRequestModel article)
         {
             //convert to datamodel
             Article dataModel = ArticleRequestModelConverter.ConvertReqModelToDataModel(article);
@@ -117,14 +125,16 @@ namespace SolutionsService.Controllers
             _context.Solutions.Add(dataModel);
             await _context.SaveChangesAsync();
 
+            SolutionResponse response = dataModel.ConvertToResponseModel();
+
             //return http response
-            return CreatedAtAction("GetSolution", new { id = dataModel.Id }, dataModel);
+            return CreatedAtAction("GetSolution", new { id = response.Id }, response);
         }
 
         // POST: api/Solutions/howto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("howto")]
-        public async Task<ActionResult<Solution>> PostHowTo(HowToRequestModel howTo)
+        public async Task<ActionResult<SolutionResponse>> PostHowTo(HowToRequestModel howTo)
         {
             //convert to datamodel
             HowTo dataModel = HowToRequestModelConverter.ConvertReqModelToDataModel(howTo);
@@ -145,8 +155,10 @@ namespace SolutionsService.Controllers
             _context.Solutions.Add(dataModel);
             await _context.SaveChangesAsync();
 
+            SolutionResponse response = dataModel.ConvertToResponseModel();
+
             //return http response
-            return CreatedAtAction("GetSolution", new { id = dataModel.Id }, dataModel);
+            return CreatedAtAction("GetSolution", new { id = response.Id }, response);
         }
 
         // DELETE: api/Solutions/5
