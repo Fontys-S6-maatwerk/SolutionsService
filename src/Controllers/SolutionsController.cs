@@ -68,18 +68,26 @@ namespace SolutionsService.Controllers
         {
 
             var solutions = await _context.Solutions.Include(solutions => solutions.SDGs).ToListAsync();
+            var SDGSolution = solutions.Where(SDGSolution => SDGSolution.SDGs.Any(sdg => sdg.SDGId == id)).ToList();
             //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
             foreach (var solution in solutions)
             {
                 foreach (SDGSolution sdg in solution.SDGs)
                 {
                     await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
- 
+                    if (sdg.SDGId.ToString() == id.ToString())
+                    {
+                        if (!SDGSolution.Contains(solution))
+                        {
+                            SDGSolution.Add(solution);
+                        }
+                    }
                 }
             }
 
-            var SDGSolution = solutions.Where(SDGSolution => SDGSolution.SDGs.Any(sdg => sdg.SDGId == id)).ToList();
-            
+
+
+
             if (SDGSolution == null)
             {
                 return NotFound();

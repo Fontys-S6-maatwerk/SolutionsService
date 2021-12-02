@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolutionsService.Converters;
@@ -14,6 +15,7 @@ namespace SolutionsService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("ggcPolicy")]
     public class SDGsController : ControllerBase
     {
         private readonly SolutionsServiceContext _context;
