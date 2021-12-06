@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Auth_Service.Web.Logic;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +20,14 @@ namespace SolutionsService.Controllers
     public class SolutionsController : ControllerBase
     {
         private readonly SolutionsServiceContext _context;
+        public EventbusSendHowTo eventbusSendHowTo;
+        public EventbusSendArticle eventbusSendArticle;
 
         public SolutionsController(SolutionsServiceContext context)
         {
             _context = context;
+            eventbusSendHowTo = new EventbusSendHowTo();
+            eventbusSendArticle = new EventbusSendArticle();
         }
 
         // GET: api/Solutions
@@ -127,6 +132,9 @@ namespace SolutionsService.Controllers
 
             SolutionResponse response = dataModel.ConvertToResponseModel();
 
+            //Call eventbus
+            eventbusSendArticle.SendArticle(dataModel);
+
             //return http response
             return CreatedAtAction("GetSolution", new { id = response.Id }, response);
         }
@@ -156,6 +164,9 @@ namespace SolutionsService.Controllers
             await _context.SaveChangesAsync();
 
             SolutionResponse response = dataModel.ConvertToResponseModel();
+
+            //Call eventbus
+            eventbusSendHowTo.SendHowTo(dataModel);
 
             //return http response
             return CreatedAtAction("GetSolution", new { id = response.Id }, response);
