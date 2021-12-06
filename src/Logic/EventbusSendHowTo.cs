@@ -14,21 +14,20 @@ namespace Auth_Service.Web.Logic
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.ExchangeDeclare(exchange: "howTo_article_logs", ExchangeType.Direct);
+                channel.QueueDeclare(queue: "translation_queue", durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-                var message = GetMessageCreateUser(sendHowTo);
+                var message = GetMessageCreateHowTo(sendHowTo);
                 var body = Encoding.UTF8.GetBytes(message);
 
                 var properties = channel.CreateBasicProperties();
                 properties.Persistent = true;
-                properties.CorrelationId = Guid.NewGuid().ToString();
 
-                channel.BasicPublish(exchange: "solution_logs", routingKey: "", basicProperties: properties, body: body);
+                channel.BasicPublish(exchange: "", routingKey: "translation_queue", basicProperties: properties, body: body);
                 Console.WriteLine(" [x] Sent {0}", message);
             }
         }
 
-        private static string GetMessageCreateUser(HowTo howTo)
+        private static string GetMessageCreateHowTo(HowTo howTo)
         {
             var json = JsonConvert.SerializeObject(howTo);
             string message = "Create new HowTo";
