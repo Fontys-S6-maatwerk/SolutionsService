@@ -2,9 +2,10 @@
 services:
 
   solution-service: 
-    build: 
-      context: "."
-      dockerfile: "Dockerfile.local"
+    # build: 
+    #   context: "."
+    #   dockerfile: "Dockerfile.local"
+    image: ghcr.io/fontys-s6-maatwerk/solutionsservice:main
     hostname: solution-service
     container_name: solution-service
     ports:
