@@ -32,7 +32,7 @@ namespace SolutionsService.Controllers
             List<Solution> solutions = await _context.Solutions.Include(solution => solution.SDGs).ToListAsync();
 
             //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
-            foreach(var solution in solutions)
+            foreach (var solution in solutions)
             {
                 foreach (SDGSolution sdg in solution.SDGs)
                 {
@@ -68,6 +68,40 @@ namespace SolutionsService.Controllers
             }
 
             return solution.ConvertToResponseModel();
+        }
+
+        // GET: api/Solutions/SDG
+        [HttpGet("sdg")]
+        public async Task<ActionResult<IEnumerable<Solution>>> GetSDGSolutions(Guid id)
+        {
+
+            var solutions = await _context.Solutions.Include(solutions => solutions.SDGs).ToListAsync();
+            var SDGSolution = solutions.Where(SDGSolution => SDGSolution.SDGs.Any(sdg => sdg.SDGId == id)).ToList();
+            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
+            foreach (var solution in solutions)
+            {
+                foreach (SDGSolution sdg in solution.SDGs)
+                {
+                    await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
+                    if (sdg.SDGId.ToString() == id.ToString())
+                    {
+                        if (!SDGSolution.Contains(solution))
+                        {
+                            SDGSolution.Add(solution);
+                        }
+                    }
+                }
+            }
+
+
+
+
+            if (SDGSolution == null)
+            {
+                return NotFound();
+            }
+
+            return SDGSolution;
         }
 
         // PUT: api/Solutions/5
@@ -110,7 +144,7 @@ namespace SolutionsService.Controllers
             Article dataModel = ArticleRequestModelConverter.ConvertReqModelToDataModel(article);
 
             //check existence of SDGs
-            foreach(var item in dataModel.SDGs)
+            foreach (var item in dataModel.SDGs)
             {
                 if (!SDGExists(item.SDGId))
                 {
