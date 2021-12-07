@@ -10,6 +10,8 @@ using SolutionsService.Converters;
 using SolutionsService.Data;
 using SolutionsService.Models;
 using SolutionsService.Models.RequestModel;
+using SolutionsService.Models.ResponseModels;
+using SolutionsService.Logic;
 
 namespace SolutionsService.Controllers
 {
@@ -26,24 +28,35 @@ namespace SolutionsService.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SDG>> PostSDG(SDGRequestModel sdg)
+        public async Task<ActionResult<SDGResponse>> PostSDG(SDGRequestModel sdg)
         {
             SDG dataModel = SDGRequestModelConverter.ConvertReqModelToDataModel(sdg);
 
             _context.SDGs.Add(dataModel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSDG", new { id = dataModel.Id }, dataModel);
+            SDGResponse response = ResponseModelBuilder.BuildSDGResponse(dataModel);
+
+            return CreatedAtAction("GetSDG", new { id = response.Id }, response);
         }
 
         [HttpGet]
-        public async Task<IEnumerable<SDG>> GetAllSDGs()
+        public async Task<IEnumerable<SDGResponse>> GetAllSDGs()
         {
-            return await _context.SDGs.ToListAsync();
+            List<SDG> data = await _context.SDGs.ToListAsync();
+
+            List<SDGResponse> response = new List<SDGResponse>();
+
+            foreach(var item in data)
+            {
+                response.Add(ResponseModelBuilder.BuildSDGResponse(item));
+            }
+
+            return response;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<SDG>> GetSDG(Guid id)
+        public async Task<ActionResult<SDGResponse>> GetSDG(Guid id)
         {
             var sdg = await _context.SDGs.FindAsync(id);
 
@@ -52,7 +65,7 @@ namespace SolutionsService.Controllers
                 return NotFound();
             }
 
-            return sdg;
+            return ResponseModelBuilder.BuildSDGResponse(sdg);
         }
     }
 }

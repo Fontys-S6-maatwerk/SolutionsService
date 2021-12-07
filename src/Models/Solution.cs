@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SolutionsService.Models.ResponseModels;
 
 namespace SolutionsService.Models
 {
@@ -29,5 +30,7 @@ namespace SolutionsService.Models
         public int ViewCount { get; set; }
         public virtual ICollection<SDGSolution> SDGs { get; set; }
         public virtual ICollection<Like> Likes { get; set; }
+
+        public abstract SolutionResponse ConvertToResponseModel();
     }
 }
