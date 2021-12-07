@@ -133,7 +133,7 @@ namespace SolutionsService.Controllers
             SolutionResponse response = dataModel.ConvertToResponseModel();
 
             //Call eventbus
-            eventbusSendArticle.SendArticle(dataModel);
+            eventbusSendArticle.SendArticle(article);
 
             //return http response
             return CreatedAtAction("GetSolution", new { id = response.Id }, response);
@@ -166,7 +166,7 @@ namespace SolutionsService.Controllers
             SolutionResponse response = dataModel.ConvertToResponseModel();
 
             //Call eventbus
-            eventbusSendHowTo.SendHowTo(dataModel);
+            eventbusSendHowTo.SendHowTo(howTo);
 
             //return http response
             return CreatedAtAction("GetSolution", new { id = response.Id }, response);

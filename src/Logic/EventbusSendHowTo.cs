@@ -2,15 +2,15 @@
 using System.Text;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using SolutionsService.Models;
+using SolutionsService.Models.RequestModel;
 
 namespace Auth_Service.Web.Logic
 {
     public class EventbusSendHowTo
     {
-        public void SendHowTo(HowTo sendHowTo)
+        public void SendHowTo(HowToRequestModel sendHowTo)
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            var factory = new ConnectionFactory() { HostName = "src-rabbitmq-service-1" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -27,7 +27,7 @@ namespace Auth_Service.Web.Logic
             }
         }
 
-        private static string GetMessageCreateHowTo(HowTo howTo)
+        private static string GetMessageCreateHowTo(HowToRequestModel howTo)
         {
             var json = JsonConvert.SerializeObject(howTo);
             string message = "Create new HowTo";

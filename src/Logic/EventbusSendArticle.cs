@@ -2,15 +2,15 @@
 using System.Text;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using SolutionsService.Models;
+using SolutionsService.Models.RequestModel;
 
 namespace Auth_Service.Web.Logic
 {
     public class EventbusSendArticle
     {
-        public void SendArticle (Article sendArticle)
+        public void SendArticle (ArticleRequestModel sendArticle)
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            var factory = new ConnectionFactory() { HostName = "src-rabbitmq-service-1" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -27,7 +27,7 @@ namespace Auth_Service.Web.Logic
             }
         }
 
-        private static string GetMessageCreateArticle(Article article)
+        private static string GetMessageCreateArticle(ArticleRequestModel article)
         {
             var json = JsonConvert.SerializeObject(article);
             string message = "Create new Article";
