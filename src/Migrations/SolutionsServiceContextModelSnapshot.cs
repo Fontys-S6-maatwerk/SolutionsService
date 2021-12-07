@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SolutionsService.Data;
+using SolutionsService.Models;
 
 namespace SolutionsService.Migrations
 {
@@ -281,6 +282,24 @@ namespace SolutionsService.Migrations
 
                     b.Navigation("Tools");
                 });
+            modelBuilder.Entity<SDG>().HasData(
+                new SDG { Name = "No poverty", SDGNumber = 1 }, 
+                new SDG { Name = "Zero hunger", SDGNumber = 2 },
+                new SDG { Name = "Good health and well-being", SDGNumber = 3 },
+                new SDG { Name = "Quality education", SDGNumber = 4 },
+                new SDG { Name = "Gender equality", SDGNumber = 5 },
+                new SDG { Name = "Clean water and sanitation", SDGNumber = 6 },
+                new SDG { Name = "Affordable and clean energy", SDGNumber = 7 },
+                new SDG { Name = "Decent work and economic growth", SDGNumber = 8 },
+                new SDG { Name = "Industry, innovation and infrastructure", SDGNumber = 9 },
+                new SDG { Name = "Reducted inequalities", SDGNumber = 10 },
+                new SDG { Name = "Sustainable cities and communities", SDGNumber = 11 },
+                new SDG { Name = "Responsible consumption and production", SDGNumber = 12 },
+                new SDG { Name = "Climate action", SDGNumber = 13 },
+                new SDG { Name = "Life below water", SDGNumber = 14 },
+                new SDG { Name = "Life on land", SDGNumber = 15 },
+                new SDG { Name = "Peace justice and strong institutions", SDGNumber = 16 },
+                new SDG { Name = "Partnerships for the goals", SDGNumber = 17 });
 #pragma warning restore 612, 618
         }
     }
