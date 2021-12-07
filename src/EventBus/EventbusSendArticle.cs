@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using SolutionsService.Models;
 
-namespace Auth_Service.Web.Logic
+namespace SolutionsService.EventBus
 {
     public class EventbusSendArticle
     {
