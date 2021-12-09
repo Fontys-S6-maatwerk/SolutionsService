@@ -2,9 +2,6 @@
 services:
 
   solution-service: 
-    # build: 
-    #   context: "."
-    #   dockerfile: "Dockerfile.local"
     image: ghcr.io/fontys-s6-maatwerk/solutionsservice:main
     hostname: solution-service
     container_name: solution-service
@@ -16,9 +13,7 @@ services:
       - ggc-network
 
   ocelot-gateway:
-    build:
-      context: "../../GGCGateWay/GGCGateWay"
-      dockerfile: "Dockerfile"
+    image: ghcr.io/fontys-s6-maatwerk/ggcgateway:main
     hostname: ocelot-gateway
     container_name: ocelot-gateway
     ports:
