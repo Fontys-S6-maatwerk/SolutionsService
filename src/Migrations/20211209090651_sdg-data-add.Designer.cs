@@ -10,8 +10,8 @@ using SolutionsService.Data;
 namespace SolutionsService.Migrations
 {
     [DbContext(typeof(SolutionsServiceContext))]
-    [Migration("20211202085637_init")]
-    partial class init
+    [Migration("20211209090651_sdg-data-add")]
+    partial class sdgdataadd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -74,6 +74,110 @@ namespace SolutionsService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SDGs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("feb4e7c8-9dd4-4b9b-82f3-499d0b464a2b"),
+                            Name = "No poverty",
+                            SDGNumber = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("9c46504c-7bb9-472e-bc9e-7da9957f34cc"),
+                            Name = "Zero hunger",
+                            SDGNumber = 2
+                        },
+                        new
+                        {
+                            Id = new Guid("27db908e-b607-4454-9259-8ac399a4cc3f"),
+                            Name = "Good health and well-being",
+                            SDGNumber = 3
+                        },
+                        new
+                        {
+                            Id = new Guid("2ff25e4b-c275-4c90-afd4-f42c4ee3197f"),
+                            Name = "Quality education",
+                            SDGNumber = 4
+                        },
+                        new
+                        {
+                            Id = new Guid("d0e263f0-4e3b-4fd0-90f4-07753263bd6e"),
+                            Name = "Gender equality",
+                            SDGNumber = 5
+                        },
+                        new
+                        {
+                            Id = new Guid("764df34b-2395-4b4e-9434-97109ec8dd6a"),
+                            Name = "Clean water and sanitation",
+                            SDGNumber = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("f79bc0bb-6e2d-4cb2-bc2b-22cda995bf81"),
+                            Name = "Affordable and clean energy",
+                            SDGNumber = 7
+                        },
+                        new
+                        {
+                            Id = new Guid("7faa4d47-0a98-4750-9c1e-5ca95799cb16"),
+                            Name = "Decent work and economic growth",
+                            SDGNumber = 8
+                        },
+                        new
+                        {
+                            Id = new Guid("caaa5420-ebe1-45d7-966f-61c5071a3669"),
+                            Name = "Industry, innovation and infrastructure",
+                            SDGNumber = 9
+                        },
+                        new
+                        {
+                            Id = new Guid("d49d23c5-aa11-4fcf-b65e-68d71d9a91e5"),
+                            Name = "Reducted inequalities",
+                            SDGNumber = 10
+                        },
+                        new
+                        {
+                            Id = new Guid("9c4d0ab6-39f1-4fdb-a5e8-117691959c28"),
+                            Name = "Sustainable cities and communities",
+                            SDGNumber = 11
+                        },
+                        new
+                        {
+                            Id = new Guid("d8821681-a681-4d19-be44-af404b3181c5"),
+                            Name = "Responsible consumption and production",
+                            SDGNumber = 12
+                        },
+                        new
+                        {
+                            Id = new Guid("e1a1894f-a631-4066-8852-703cba2c33c2"),
+                            Name = "Climate action",
+                            SDGNumber = 13
+                        },
+                        new
+                        {
+                            Id = new Guid("3624d854-8c88-4023-92b8-134a99d25f6d"),
+                            Name = "Life below water",
+                            SDGNumber = 14
+                        },
+                        new
+                        {
+                            Id = new Guid("9d6f8727-bc53-4818-8d0c-0e334555663f"),
+                            Name = "Life on land",
+                            SDGNumber = 15
+                        },
+                        new
+                        {
+                            Id = new Guid("0e1a9682-3632-48ae-8abe-e7c2f1c7da75"),
+                            Name = "Peace justice and strong institutions",
+                            SDGNumber = 16
+                        },
+                        new
+                        {
+                            Id = new Guid("50e63213-7243-4232-bb6b-14bccb665341"),
+                            Name = "Partnerships for the goals",
+                            SDGNumber = 17
+                        });
                 });
 
             modelBuilder.Entity("SolutionsService.Models.SDGSolution", b =>
