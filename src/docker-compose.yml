@@ -1,4 +1,4 @@
-﻿version: '3.8'
+version: '3.8'
 services:
 
   solution-service: 
@@ -11,6 +11,7 @@ services:
       - sol_db
     networks: 
       - ggc-network
+    restart: unless-stopped
 
   ocelot-gateway:
     image: ghcr.io/fontys-s6-maatwerk/ggcgateway:main
@@ -22,6 +23,7 @@ services:
       - solution-service
     networks: 
       - ggc-network
+    restart: unless-stopped
 
   sol_db:
     image: "mcr.microsoft.com/mssql/server"
@@ -37,6 +39,7 @@ services:
      - "1001:1433"
     networks: 
      - ggc-network
+     restart: unless-stopped
 
 volumes:
   sol_volume:
