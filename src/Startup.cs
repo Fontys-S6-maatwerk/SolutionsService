@@ -48,6 +48,10 @@ namespace SolutionsService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SolutionsServiceContext context)
         {
+            while(!context.Database.CanConnect())
+            {
+                Task.Delay(500);
+            }
             context.Database.Migrate();
 
             if (env.IsDevelopment())
