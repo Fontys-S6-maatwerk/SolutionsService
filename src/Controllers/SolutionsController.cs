@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,25 +29,62 @@ namespace SolutionsService.Controllers
         // GET: api/Solutions
         [HttpGet]
         public ActionResult<IEnumerable<Solution>> GetSolution([FromQuery] SolutionParameters solutionParameters)
-        { 
-            var solutions = _context.Solutions.Where(s =>
-                s.ViewCount >= solutionParameters.MimimalViewCount &&
-                s.Likes.Count >= solutionParameters.MinimalAmountOfLikes);
-            
-            if(!string.IsNullOrEmpty(solutionParameters.WeatherExtreme))
+        {
+            var solutions = _context.Solutions.OfType<Solution>().Include("SDGs");
+
+            Console.WriteLine(solutionParameters.SolutionTypes.Count());
+
+            if (solutionParameters.SolutionTypes != null && solutionParameters.SolutionTypes.Any())
             {
-                solutions = solutions.Where(s => s.WeatherExtreme == solutionParameters.WeatherExtreme);
+                Console.WriteLine("Start filtering Type");
+                foreach(var solutionType in solutionParameters.SolutionTypes)
+                {
+                    Console.WriteLine(solutionType);
+                }
+                var solutionsFiltered = new List<Solution>();
+                if (solutionParameters.SolutionTypes.Contains("Article"))
+                {
+                    Console.WriteLine("Filter Articles");
+                    solutionsFiltered.AddRange(solutions.OfType<Article>());
+                }
+                if (solutionParameters.SolutionTypes.Contains("HowTo"))
+                {
+                    Console.WriteLine("Filter HowTo's");
+                    solutionsFiltered.AddRange(solutions.OfType<HowTo>());
+                }
+                solutions = solutionsFiltered.AsQueryable();
             }
-            
-            if(!string.IsNullOrEmpty(solutionParameters.SDG))
+            Console.WriteLine(solutions.Count()); 
+
+            if (solutionParameters.WeatherExtremes != null && solutionParameters.WeatherExtremes.Any())
             {
-                solutions = solutions.Where(s => s.SDGs.Contains(_context.SDGs.FirstOrDefault(sdg => sdg.Name == solutionParameters.SDG)));
+                Console.WriteLine("Start filtering WeatherExtreme");
+                var solutionsFiltered = new List<Solution>();
+                foreach (var weatherExtreme in solutionParameters.WeatherExtremes)
+                {
+                    solutionsFiltered.AddRange(solutions.Where(s => s.WeatherExtreme == weatherExtreme));
+                }
+                solutions = solutionsFiltered.AsQueryable();
             }
-            
-            if(!solutionParameters.AuthorId.Equals(Guid.Empty))
+
+            Console.WriteLine("Start filtering SDGs");
+
+            if (solutionParameters.SDGs != null && solutionParameters.SDGs.Any())
             {
-                solutions = solutions.Where(s => s.AuthorId.Equals(solutionParameters.AuthorId)).AsQueryable();
+                var solutionsFiltered = new List<Solution>();
+                foreach(var sdg in solutionParameters.SDGs)
+                {
+                    solutionsFiltered.AddRange(solutions.Where(s => s.SDGs.Contains(_context.SDGs.FirstOrDefault(sdg => sdg.Name.Equals(sdg)))));
+                }
+                solutions = solutionsFiltered.AsQueryable();
             }
+
+            //if (!solutionParameters.AuthorId.Equals(Guid.Empty))
+            //{
+            //    solutions = solutions.Where(s => s.AuthorId.Equals(solutionParameters.AuthorId)).AsQueryable();
+            //}
+
+            SearchByName(ref solutions, solutionParameters.Name);
 
             var pagedSolutions = PagedList<Solution>.ToPagedList(solutions, solutionParameters.PageNumber, solutionParameters.PageSize);
 
@@ -114,6 +153,9 @@ namespace SolutionsService.Controllers
         [HttpPost("article")]
         public async Task<ActionResult<Solution>> PostArticle(Article solution)
         {
+            solution.UploadDate = DateTime.Now;
+            solution.LastUpdatedTime = DateTime.Now;
+            _context.AttachRange(solution.SDGs);
             _context.Solutions.Add(solution);
             await _context.SaveChangesAsync();
 
@@ -125,6 +167,9 @@ namespace SolutionsService.Controllers
         [HttpPost("howto")]
         public async Task<ActionResult<Solution>> PostHowTo(HowTo solution)
         {
+            solution.UploadDate = DateTime.Now;
+            solution.LastUpdatedTime = DateTime.Now;
+            _context.AttachRange(solution.SDGs);
             _context.Solutions.Add(solution);
             await _context.SaveChangesAsync();
 
@@ -185,6 +230,15 @@ namespace SolutionsService.Controllers
         private bool SolutionExists(Guid id)
         {
             return _context.Solutions.Any(e => e.Id == id);
+        }
+
+        private void SearchByName(ref IQueryable<Solution> solutions, string name)
+        {
+            if (!solutions.Any() || string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+            solutions = solutions.Where(s => s.Name.ToLower().Contains(name.Trim().ToLower()));
         }
     }
 }

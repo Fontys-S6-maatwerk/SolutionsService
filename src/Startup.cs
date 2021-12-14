@@ -13,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SolutionsService.Data;
+using SolutionsService.Helpers;
+using SolutionsService.Models;
 
 namespace SolutionsService
 {
@@ -33,6 +35,8 @@ namespace SolutionsService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SolutionsService", Version = "v1" });
             });
+
+            services.AddScoped<ISortHelper<Solution>, SortHelper<Solution>>();
 
             var connection = Configuration.GetConnectionString("SolutionsServiceContext");
             services.AddDbContextPool<SolutionsServiceContext>(

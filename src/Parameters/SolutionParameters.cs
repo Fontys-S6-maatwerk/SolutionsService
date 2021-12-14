@@ -7,19 +7,21 @@ namespace SolutionsService.Parameters
 {
     public class SolutionParameters : QueryStringParameters
     {
-        public string WeatherExtreme { get; set; }
+        public string Name { get; set; }
 
-        public string SDG { get; set; }
+        public List<string> SolutionTypes { get; set; }
 
-        public string Difficulty { get; set; }
+        public List<string> WeatherExtremes { get; set; }
 
-        public int MinimumImpact { get; set; } = 0;
+        public List<string> SDGs { get; set; }
 
-        public Guid AuthorId { get; set; }
+        public string Language { get; set; }
 
-        public long MimimalViewCount { get; set; } = 0;
+        //public Guid AuthorId { get; set; }
 
-        public int MinimalAmountOfLikes { get; set; } = 0;
+        //public long MimimalViewCount { get; set; } = 0;
+
+        //public int MinimalAmountOfLikes { get; set; } = 0;
 
         public SolutionParameters()
         {
