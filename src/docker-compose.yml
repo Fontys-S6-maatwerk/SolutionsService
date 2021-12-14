@@ -39,7 +39,7 @@ services:
      - "1001:1433"
     networks: 
      - ggc-network
-     restart: unless-stopped
+    restart: unless-stopped
 
 volumes:
   sol_volume:
