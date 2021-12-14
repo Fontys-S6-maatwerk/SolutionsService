@@ -72,36 +72,27 @@ namespace SolutionsService.Controllers
 
         // GET: api/Solutions/SDG
         [HttpGet("sdg")]
-        public async Task<ActionResult<IEnumerable<Solution>>> GetSDGSolutions(Guid id)
+        public async Task<ActionResult<IEnumerable<SolutionResponse>>> GetSDGSolutions(Guid id)
         {
-
-            var solutions = await _context.Solutions.Include(solutions => solutions.SDGs).ToListAsync();
-            var SDGSolution = solutions.Where(SDGSolution => SDGSolution.SDGs.Any(sdg => sdg.SDGId == id)).ToList();
-            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
-            foreach (var solution in solutions)
-            {
-                foreach (SDGSolution sdg in solution.SDGs)
-                {
-                    await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
-                    if (sdg.SDGId.ToString() == id.ToString())
-                    {
-                        if (!SDGSolution.Contains(solution))
-                        {
-                            SDGSolution.Add(solution);
-                        }
-                    }
-                }
-            }
-
-
-
-
-            if (SDGSolution == null)
+            if (!SDGExists(id))
             {
                 return NotFound();
             }
 
-            return SDGSolution;
+            var solutionsPerSDG = await _context.Solutions
+                .Include(solutions => solutions.SDGs)
+                .ThenInclude(sdg => sdg.SDG)
+                .Where(sol => sol.SDGs.Any(sdg => sdg.SDGId == id))
+                .ToListAsync();
+
+            List<SolutionResponse> response = new List<SolutionResponse>();
+
+            foreach(var item in solutionsPerSDG)
+            {
+                response.Add(item.ConvertToResponseModel());
+            }
+
+            return response;
         }
 
         // PUT: api/Solutions/5
@@ -226,10 +217,22 @@ namespace SolutionsService.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<IActionResult> GetSolutionsFromAuthor(Guid id)
+        public async Task<ActionResult<IEnumerable<SolutionResponse>>> GetSolutionsFromAuthor(Guid id)
         {
-            //TODO: implement
-            return new OkResult();
+            var solutionsPerSDG = await _context.Solutions
+                .Include(solutions => solutions.SDGs)
+                .ThenInclude(sdg => sdg.SDG)
+                .Where(sol => sol.AuthorId == id)
+                .ToListAsync();
+
+            List<SolutionResponse> response = new List<SolutionResponse>();
+
+            foreach (var item in solutionsPerSDG)
+            {
+                response.Add(item.ConvertToResponseModel());
+            }
+
+            return response;
         }
 
         [HttpGet("liked/{id}")]
