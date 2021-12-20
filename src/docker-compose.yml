@@ -2,7 +2,9 @@ version: '3.8'
 services:
 
   solution-service: 
-    image: ghcr.io/fontys-s6-maatwerk/solutionsservice:main
+    build: 
+        context: .
+        dockerfile: Dockerfile.local
     hostname: solution-service
     container_name: solution-service
     ports:
