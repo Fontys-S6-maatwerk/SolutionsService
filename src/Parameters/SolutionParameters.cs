@@ -17,11 +17,7 @@ namespace SolutionsService.Parameters
 
         public string Language { get; set; }
 
-        //public Guid AuthorId { get; set; }
-
-        //public long MimimalViewCount { get; set; } = 0;
-
-        //public int MinimalAmountOfLikes { get; set; } = 0;
+        public Guid AuthorId { get; set; }
 
         public SolutionParameters()
         {

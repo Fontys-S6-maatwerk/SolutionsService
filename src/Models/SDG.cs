@@ -11,7 +11,7 @@ namespace SolutionsService.Models
     {
         public SDG()
         {
-            this.Solutions = new HashSet<Solution>();
+            this.Solutions = new HashSet<SDGSolution>();
         }
 
         [Key]
@@ -19,6 +19,16 @@ namespace SolutionsService.Models
         public string Name { get; set; }
         public int SDGNumber { get; set; }
         [JsonIgnore]
-        public virtual ICollection<Solution> Solutions { get; set; }
+        public virtual ICollection<SDGSolution> Solutions { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            SDG other = obj as SDG;
+            if (other == null)
+            {
+                return false;
+            }
+            return other.Name == Name && other.SDGNumber == SDGNumber; 
+        }
     }
 }

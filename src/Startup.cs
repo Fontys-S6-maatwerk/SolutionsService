@@ -39,8 +39,14 @@ namespace SolutionsService
             services.AddScoped<ISortHelper<Solution>, SortHelper<Solution>>();
 
             var connection = Configuration.GetConnectionString("SolutionsServiceContext");
-            services.AddDbContextPool<SolutionsServiceContext>(
-                options => options.UseSqlServer(connection));
+            services    
+                .AddDbContextPool<SolutionsServiceContext>(options => options.UseSqlServer(connection))
+                .AddCors(o => o.AddPolicy("ggcPolicy", builder =>
+                {
+                    builder.WithOrigins("http://localhost:8080", "http://localhost:8081", "http://localhost:8082")
+                           .AllowAnyMethod()        
+                           .AllowAnyHeader();
+                }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +66,8 @@ namespace SolutionsService
             app.UseRouting();
 
             app.UseAuthorization();
+            
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {

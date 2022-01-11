@@ -96,24 +96,24 @@ namespace SolutionsService.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SDGSolution",
+                name: "SDGSolutions",
                 columns: table => new
                 {
-                    SDGsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SolutionsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    SolutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SDGId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SDGSolution", x => new { x.SDGsId, x.SolutionsId });
+                    table.PrimaryKey("PK_SDGSolutions", x => new { x.SDGId, x.SolutionId });
                     table.ForeignKey(
-                        name: "FK_SDGSolution_SDGs_SDGsId",
-                        column: x => x.SDGsId,
+                        name: "FK_SDGSolutions_SDGs_SDGId",
+                        column: x => x.SDGId,
                         principalTable: "SDGs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SDGSolution_Solutions_SolutionsId",
-                        column: x => x.SolutionsId,
+                        name: "FK_SDGSolutions_Solutions_SolutionId",
+                        column: x => x.SolutionId,
                         principalTable: "Solutions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -188,9 +188,9 @@ namespace SolutionsService.Migrations
                 column: "SolutionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SDGSolution_SolutionsId",
-                table: "SDGSolution",
-                column: "SolutionsId");
+                name: "IX_SDGSolutions_SolutionId",
+                table: "SDGSolutions",
+                column: "SolutionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Steps_SolutionId",
@@ -215,7 +215,7 @@ namespace SolutionsService.Migrations
                 name: "Materials");
 
             migrationBuilder.DropTable(
-                name: "SDGSolution");
+                name: "SDGSolutions");
 
             migrationBuilder.DropTable(
                 name: "Steps");

@@ -4,19 +4,23 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using SolutionsService.Converters;
 using SolutionsService.Data;
 using SolutionsService.Helpers;
 using SolutionsService.Models;
 using SolutionsService.Parameters;
+using SolutionsService.Models.RequestModel;
+using SolutionsService.Models.ResponseModels;
 
 namespace SolutionsService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("ggcPolicy")]
     public class SolutionsController : ControllerBase
     {
         private readonly SolutionsServiceContext _context;
@@ -30,31 +34,21 @@ namespace SolutionsService.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Solution>> GetSolution([FromQuery] SolutionParameters solutionParameters)
         {
-            var solutions = _context.Solutions.OfType<Solution>().Include("SDGs");
-
-            Console.WriteLine(solutionParameters.SolutionTypes.Count());
+            var solutions = _context.Solutions.OfType<Solution>().Include(s => s.SDGs).ThenInclude(sdgs => sdgs.SDG).AsQueryable();
 
             if (solutionParameters.SolutionTypes != null && solutionParameters.SolutionTypes.Any())
             {
-                Console.WriteLine("Start filtering Type");
-                foreach(var solutionType in solutionParameters.SolutionTypes)
-                {
-                    Console.WriteLine(solutionType);
-                }
                 var solutionsFiltered = new List<Solution>();
                 if (solutionParameters.SolutionTypes.Contains("Article"))
                 {
-                    Console.WriteLine("Filter Articles");
                     solutionsFiltered.AddRange(solutions.OfType<Article>());
                 }
                 if (solutionParameters.SolutionTypes.Contains("HowTo"))
                 {
-                    Console.WriteLine("Filter HowTo's");
                     solutionsFiltered.AddRange(solutions.OfType<HowTo>());
                 }
                 solutions = solutionsFiltered.AsQueryable();
-            }
-            Console.WriteLine(solutions.Count()); 
+            } 
 
             if (solutionParameters.WeatherExtremes != null && solutionParameters.WeatherExtremes.Any())
             {
@@ -67,22 +61,20 @@ namespace SolutionsService.Controllers
                 solutions = solutionsFiltered.AsQueryable();
             }
 
-            Console.WriteLine("Start filtering SDGs");
-
             if (solutionParameters.SDGs != null && solutionParameters.SDGs.Any())
             {
                 var solutionsFiltered = new List<Solution>();
                 foreach(var sdg in solutionParameters.SDGs)
                 {
-                    solutionsFiltered.AddRange(solutions.Where(s => s.SDGs.Contains(_context.SDGs.FirstOrDefault(sdg => sdg.Name.Equals(sdg)))));
+                    solutionsFiltered.AddRange(solutions.Where(s => s.SDGs.Equals(_context.SDGSolutions.Where(sdgSolution => sdgSolution.SDG.Name.Equals(sdg)))));
                 }
                 solutions = solutionsFiltered.AsQueryable();
             }
 
-            //if (!solutionParameters.AuthorId.Equals(Guid.Empty))
-            //{
-            //    solutions = solutions.Where(s => s.AuthorId.Equals(solutionParameters.AuthorId)).AsQueryable();
-            //}
+            if (!solutionParameters.AuthorId.Equals(Guid.Empty))
+            {
+                solutions = solutions.Where(s => s.AuthorId.Equals(solutionParameters.AuthorId)).AsQueryable();
+            }
 
             SearchByName(ref solutions, solutionParameters.Name);
 
@@ -105,16 +97,56 @@ namespace SolutionsService.Controllers
 
         // GET: api/Solutions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Solution>> GetSolution(Guid id)
+        public async Task<ActionResult<SolutionResponse>> GetSolution(Guid id)
         {
-            var solution = await _context.Solutions.FindAsync(id);
+            var solution = await _context.Solutions.Include(solution => solution.SDGs).FirstOrDefaultAsync(x => x.Id == id);
+
+            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
+            foreach (SDGSolution sdg in solution.SDGs)
+            {
+                await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
+            }
 
             if (solution == null)
             {
                 return NotFound();
             }
 
-            return solution;
+            return solution.ConvertToResponseModel();
+        }
+
+        // GET: api/Solutions/SDG
+        [HttpGet("sdg")]
+        public async Task<ActionResult<IEnumerable<Solution>>> GetSDGSolutions(Guid id)
+        {
+
+            var solutions = await _context.Solutions.Include(solutions => solutions.SDGs).ToListAsync();
+            var SDGSolution = solutions.Where(SDGSolution => SDGSolution.SDGs.Any(sdg => sdg.SDGId == id)).ToList();
+            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
+            foreach (var solution in solutions)
+            {
+                foreach (SDGSolution sdg in solution.SDGs)
+                {
+                    await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
+                    if (sdg.SDGId.ToString() == id.ToString())
+                    {
+                        if (!SDGSolution.Contains(solution))
+                        {
+                            SDGSolution.Add(solution);
+                        }
+                    }
+                }
+            }
+
+
+
+
+            if (SDGSolution == null)
+            {
+                return NotFound();
+            }
+
+            return SDGSolution;
         }
 
         // PUT: api/Solutions/5
@@ -151,29 +183,61 @@ namespace SolutionsService.Controllers
         // POST: api/Solutions/article
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("article")]
-        public async Task<ActionResult<Solution>> PostArticle(Article solution)
+        public async Task<ActionResult<SolutionResponse>> PostArticle(ArticleRequestModel article)
         {
-            solution.UploadDate = DateTime.Now;
-            solution.LastUpdatedTime = DateTime.Now;
-            _context.AttachRange(solution.SDGs);
-            _context.Solutions.Add(solution);
+            //convert to datamodel
+            Article dataModel = ArticleRequestModelConverter.ConvertReqModelToDataModel(article);
+
+            //check existence of SDGs
+            foreach (var item in dataModel.SDGs)
+            {
+                if (!SDGExists(item.SDGId))
+                {
+                    return NotFound();
+                }
+            }
+
+            //ensure many to many relationship is properly defined
+            await PopulateManyToManySDGs(dataModel);
+
+            //save entity
+            _context.Solutions.Add(dataModel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
+            SolutionResponse response = dataModel.ConvertToResponseModel();
+
+            //return http response
+            return CreatedAtAction("GetSolution", new { id = response.Id }, response);
         }
 
         // POST: api/Solutions/howto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("howto")]
-        public async Task<ActionResult<Solution>> PostHowTo(HowTo solution)
+        public async Task<ActionResult<SolutionResponse>> PostHowTo(HowToRequestModel howTo)
         {
-            solution.UploadDate = DateTime.Now;
-            solution.LastUpdatedTime = DateTime.Now;
-            _context.AttachRange(solution.SDGs);
-            _context.Solutions.Add(solution);
+            //convert to datamodel
+            HowTo dataModel = HowToRequestModelConverter.ConvertReqModelToDataModel(howTo);
+
+            //check existence of SDGs
+            foreach (var item in dataModel.SDGs)
+            {
+                if (!SDGExists(item.SDGId))
+                {
+                    return NotFound();
+                }
+            }
+
+            //ensure many to many relationships are properly defined
+            await PopulateManyToManySDGs(dataModel);
+
+            //save entity
+            _context.Solutions.Add(dataModel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSolution", new { id = solution.Id }, solution);
+            SolutionResponse response = dataModel.ConvertToResponseModel();
+
+            //return http response
+            return CreatedAtAction("GetSolution", new { id = response.Id }, response);
         }
 
         // DELETE: api/Solutions/5
@@ -230,6 +294,24 @@ namespace SolutionsService.Controllers
         private bool SolutionExists(Guid id)
         {
             return _context.Solutions.Any(e => e.Id == id);
+        }
+
+        private bool SDGExists(Guid id)
+        {
+            return _context.SDGs.Any(e => e.Id == id);
+        }
+
+        private async Task<Solution> PopulateManyToManySDGs(Solution solution)
+        {
+            List<SDG> sdgEntities = new List<SDG>();
+
+            foreach (var item in solution.SDGs)
+            {
+                SDG sdg = await _context.SDGs.FindAsync(item.SDGId);
+                item.SDG = sdg;
+            }
+
+            return solution;
         }
 
         private void SearchByName(ref IQueryable<Solution> solutions, string name)

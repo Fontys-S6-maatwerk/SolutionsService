@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SolutionsService.Models.ResponseModels;
 
 namespace SolutionsService.Models
 {
@@ -11,7 +12,7 @@ namespace SolutionsService.Models
     {
         protected Solution()
         {
-            this.SDGs = new HashSet<SDG>();
+            this.SDGs = new HashSet<SDGSolution>();
             this.Likes = new HashSet<Like>();
         }
 
@@ -27,7 +28,25 @@ namespace SolutionsService.Models
         [Column(TypeName = "datetime2")]
         public DateTime LastUpdatedTime { get; set; }
         public int ViewCount { get; set; }
-        public virtual ICollection<SDG> SDGs { get; set; }
+        public virtual ICollection<SDGSolution> SDGs { get; set; }
         public virtual ICollection<Like> Likes { get; set; }
+
+        public abstract SolutionResponse ConvertToResponseModel();
+
+        public override bool Equals(object obj)
+        {
+            return obj is Solution solution &&
+                   Id.Equals(solution.Id) &&
+                   Name == solution.Name &&
+                   WeatherExtreme == solution.WeatherExtreme &&
+                   HeaderImageURL == solution.HeaderImageURL &&
+                   Description == solution.Description &&
+                   AuthorId.Equals(solution.AuthorId) &&
+                   UploadDate == solution.UploadDate &&
+                   LastUpdatedTime == solution.LastUpdatedTime &&
+                   ViewCount == solution.ViewCount &&
+                   EqualityComparer<ICollection<SDGSolution>>.Default.Equals(SDGs, solution.SDGs) &&
+                   EqualityComparer<ICollection<Like>>.Default.Equals(Likes, solution.Likes);
+        }
     }
 }
