@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SolutionsService.Converters;
 using SolutionsService.Data;
+using SolutionsService.Helpers;
 using SolutionsService.Models;
+using SolutionsService.Parameters;
 using SolutionsService.Models.RequestModel;
 using SolutionsService.Models.ResponseModels;
 
@@ -27,27 +32,67 @@ namespace SolutionsService.Controllers
 
         // GET: api/Solutions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SolutionResponse>>> GetSolution()
+        public ActionResult<IEnumerable<Solution>> GetSolution([FromQuery] SolutionParameters solutionParameters)
         {
-            List<Solution> solutions = await _context.Solutions.Include(solution => solution.SDGs).ToListAsync();
+            var solutions = _context.Solutions.OfType<Solution>().Include(s => s.SDGs).ThenInclude(sdgs => sdgs.SDG).AsQueryable();
 
-            //entity framework is a bit TOO lazy with lazy loading so you have to explicitly load the SDGs in order for them to appear in the response
-            foreach (var solution in solutions)
+            if (solutionParameters.SolutionTypes != null && solutionParameters.SolutionTypes.Any())
             {
-                foreach (SDGSolution sdg in solution.SDGs)
+                var solutionsFiltered = new List<Solution>();
+                if (solutionParameters.SolutionTypes.Contains("Article"))
                 {
-                    await _context.SDGs.FirstOrDefaultAsync(x => x.Id == sdg.SDGId);
+                    solutionsFiltered.AddRange(solutions.OfType<Article>());
                 }
-            }
+                if (solutionParameters.SolutionTypes.Contains("HowTo"))
+                {
+                    solutionsFiltered.AddRange(solutions.OfType<HowTo>());
+                }
+                solutions = solutionsFiltered.AsQueryable();
+            } 
 
-            List<SolutionResponse> response = new List<SolutionResponse>();
-
-            foreach(var item in solutions)
+            if (solutionParameters.WeatherExtremes != null && solutionParameters.WeatherExtremes.Any())
             {
-                response.Add(item.ConvertToResponseModel());
+                Console.WriteLine("Start filtering WeatherExtreme");
+                var solutionsFiltered = new List<Solution>();
+                foreach (var weatherExtreme in solutionParameters.WeatherExtremes)
+                {
+                    solutionsFiltered.AddRange(solutions.Where(s => s.WeatherExtreme == weatherExtreme));
+                }
+                solutions = solutionsFiltered.AsQueryable();
             }
 
-            return response;
+            if (solutionParameters.SDGs != null && solutionParameters.SDGs.Any())
+            {
+                var solutionsFiltered = new List<Solution>();
+                foreach(var sdg in solutionParameters.SDGs)
+                {
+                    solutionsFiltered.AddRange(solutions.Where(solution => solution.SDGs.Any(sdgsolution => sdgsolution.SDG.Name.Equals(sdg))));
+                }
+                solutions = solutionsFiltered.AsQueryable();
+            }
+
+            if (!solutionParameters.AuthorId.Equals(Guid.Empty))
+            {
+                solutions = solutions.Where(s => s.AuthorId.Equals(solutionParameters.AuthorId)).AsQueryable();
+            }
+
+            SearchByName(ref solutions, solutionParameters.Name);
+
+            var pagedSolutions = PagedList<Solution>.ToPagedList(solutions, solutionParameters.PageNumber, solutionParameters.PageSize);
+
+            var metadata = new
+            {
+                pagedSolutions.TotalCount,
+                pagedSolutions.PageSize,
+                pagedSolutions.CurrentPage,
+                pagedSolutions.TotalPages,
+                pagedSolutions.HasNext,
+                pagedSolutions.HasPrevious
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(pagedSolutions);
         }
 
         // GET: api/Solutions/5
@@ -270,6 +315,15 @@ namespace SolutionsService.Controllers
             }
 
             return solution;
+        }
+
+        private void SearchByName(ref IQueryable<Solution> solutions, string name)
+        {
+            if (!solutions.Any() || string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+            solutions = solutions.Where(s => s.Name.ToLower().Contains(name.Trim().ToLower()));
         }
     }
 }

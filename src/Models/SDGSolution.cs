@@ -15,6 +15,16 @@ namespace SolutionsService.Models
 
         [JsonIgnore]
         public Guid SDGId { get; set; }
-        public SDG SDG { get; set; }
+        public virtual SDG SDG { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if(!(obj is SDGSolution))
+            {
+                return false;
+            }
+            SDGSolution other = obj as SDGSolution;
+            return other.SDG == SDG;
+        }
     }
 }

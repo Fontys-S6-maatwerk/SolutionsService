@@ -30,5 +30,27 @@ namespace SolutionsService.Models
         {
             return ResponseModelBuilder.BuildHowToResponse(this);
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is HowTo to &&
+                   base.Equals(obj) &&
+                   Id.Equals(to.Id) &&
+                   Name == to.Name &&
+                   WeatherExtreme == to.WeatherExtreme &&
+                   HeaderImageURL == to.HeaderImageURL &&
+                   Description == to.Description &&
+                   AuthorId.Equals(to.AuthorId) &&
+                   UploadDate == to.UploadDate &&
+                   LastUpdatedTime == to.LastUpdatedTime &&
+                   ViewCount == to.ViewCount &&
+                   EqualityComparer<ICollection<SDGSolution>>.Default.Equals(SDGs, to.SDGs) &&
+                   EqualityComparer<ICollection<Like>>.Default.Equals(Likes, to.Likes) &&
+                   Introduction == to.Introduction &&
+                   Difficulty == to.Difficulty &&
+                   EqualityComparer<ICollection<Material>>.Default.Equals(Materials, to.Materials) &&
+                   EqualityComparer<ICollection<Tool>>.Default.Equals(Tools, to.Tools) &&
+                   EqualityComparer<ICollection<Step>>.Default.Equals(Steps, to.Steps);
+        }
     }
 }

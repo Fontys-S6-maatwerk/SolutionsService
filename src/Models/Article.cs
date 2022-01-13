@@ -23,5 +23,12 @@ namespace SolutionsService.Models
         {
             return ResponseModelBuilder.BuildArticleResponse(this);
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Article article &&
+                   base.Equals(obj) &&
+                   Content == article.Content;
+        }
     }
 }

@@ -13,6 +13,12 @@ namespace SolutionsService.Data
             : base(options)
         {
         }
+
+        public SolutionsServiceContext()
+        {
+
+        }
+
         public DbSet<Article> Articles { get; set; }
         public DbSet<HowTo> HowTos { get; set; }
         public DbSet<SDG> SDGs { get; set; }
@@ -20,8 +26,8 @@ namespace SolutionsService.Data
         public DbSet<Material> Materials { get; set; }
         public DbSet<Tool> Tools { get; set; }
         public DbSet<Step> Steps { get; set; }
-        public DbSet<Solution> Solutions { get; set; }
-        public DbSet<SDGSolution> SDGSolutions { get; set; }
+        public virtual DbSet<Solution> Solutions { get; set; }
+        public virtual DbSet<SDGSolution> SDGSolutions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

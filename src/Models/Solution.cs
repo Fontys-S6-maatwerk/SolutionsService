@@ -32,5 +32,21 @@ namespace SolutionsService.Models
         public virtual ICollection<Like> Likes { get; set; }
 
         public abstract SolutionResponse ConvertToResponseModel();
+
+        public override bool Equals(object obj)
+        {
+            return obj is Solution solution &&
+                   Id.Equals(solution.Id) &&
+                   Name == solution.Name &&
+                   WeatherExtreme == solution.WeatherExtreme &&
+                   HeaderImageURL == solution.HeaderImageURL &&
+                   Description == solution.Description &&
+                   AuthorId.Equals(solution.AuthorId) &&
+                   UploadDate == solution.UploadDate &&
+                   LastUpdatedTime == solution.LastUpdatedTime &&
+                   ViewCount == solution.ViewCount &&
+                   EqualityComparer<ICollection<SDGSolution>>.Default.Equals(SDGs, solution.SDGs) &&
+                   EqualityComparer<ICollection<Like>>.Default.Equals(Likes, solution.Likes);
+        }
     }
 }
