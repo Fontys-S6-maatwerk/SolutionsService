@@ -9,15 +9,16 @@ namespace SolutionsService.Data
 {
     public class SolutionsServiceContext : DbContext
     {
-        public SolutionsServiceContext()
-        {
-
-        }
-        
         public SolutionsServiceContext (DbContextOptions<SolutionsServiceContext> options)
             : base(options)
         {
         }
+
+        public SolutionsServiceContext()
+        {
+
+        }
+
         public DbSet<Article> Articles { get; set; }
         public DbSet<HowTo> HowTos { get; set; }
         public DbSet<SDG> SDGs { get; set; }

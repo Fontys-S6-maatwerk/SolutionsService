@@ -498,7 +498,7 @@ namespace SolutionsTest.Controllers
             mockSolutionServiceContext.Setup(ssc => ssc.Solutions).Returns(solutionsMockSet.Object);
             mockSolutionServiceContext.Setup(ssc => ssc.SDGSolutions).Returns(sdgSolutionsMockSet.Object);
 
-            IEnumerable<Solution> ExpectedSolutions = Solutions.Where(s => s.SDGs.Any(ss => ss.SDG == SDGs.ElementAt(12)));
+            IEnumerable<Solution> ExpectedSolutions = Solutions.Where(s => s.SDGs.Any(ss => ss.SDG.SDGNumber == 13));
             OkObjectResult expectedResult = new OkObjectResult(ExpectedSolutions);
 
             SolutionsController solutionsController = new SolutionsController(mockSolutionServiceContext.Object);
@@ -533,7 +533,7 @@ namespace SolutionsTest.Controllers
             mockSolutionServiceContext.Setup(ssc => ssc.Solutions).Returns(solutionsMockSet.Object);
             mockSolutionServiceContext.Setup(ssc => ssc.SDGSolutions).Returns(sdgSolutionsMockSet.Object);
 
-            IEnumerable<Solution> ExpectedSolutions = Solutions.Where(s => s.SDGs.Any(ss => ss.SDG == SDGs.ElementAt(4)));
+            IEnumerable<Solution> ExpectedSolutions = Solutions.Where(solution => solution.SDGs.Any(sdgsolution => sdgsolution.SDG.SDGNumber == 5));
             OkObjectResult expectedResult = new OkObjectResult(ExpectedSolutions);
 
             SolutionsController solutionsController = new SolutionsController(mockSolutionServiceContext.Object);
@@ -550,7 +550,7 @@ namespace SolutionsTest.Controllers
         }
 
         [Test]
-        public void TestGetSolutionsWithSdgFilterNoPoverty()
+        public void TestGetSolutionsWithSdgFilterNoPovertyYieldsNoResult()
         {
             Mock<DbSet<Solution>> solutionsMockSet = new Mock<DbSet<Solution>>();
             solutionsMockSet.As<IQueryable<Solution>>().Setup(m => m.Provider).Returns(Solutions.AsQueryable().Provider);
@@ -568,7 +568,7 @@ namespace SolutionsTest.Controllers
             mockSolutionServiceContext.Setup(ssc => ssc.Solutions).Returns(solutionsMockSet.Object);
             mockSolutionServiceContext.Setup(ssc => ssc.SDGSolutions).Returns(sdgSolutionsMockSet.Object);
 
-            IEnumerable<Solution> ExpectedSolutions = Solutions.Where(s => s.SDGs.Any(ss => ss.SDG == SDGs.ElementAt(0)));
+            IEnumerable<Solution> ExpectedSolutions = Solutions.Where(s => s.SDGs.Any(ss => ss.SDG.SDGNumber == 1));
             OkObjectResult expectedResult = new OkObjectResult(ExpectedSolutions);
 
             SolutionsController solutionsController = new SolutionsController(mockSolutionServiceContext.Object);
@@ -603,7 +603,7 @@ namespace SolutionsTest.Controllers
             mockSolutionServiceContext.Setup(ssc => ssc.Solutions).Returns(solutionsMockSet.Object);
             mockSolutionServiceContext.Setup(ssc => ssc.SDGSolutions).Returns(sdgSolutionsMockSet.Object);
 
-            IEnumerable<Solution> ExpectedSolutions = Solutions.Where(s => s.SDGs == SDGs.ElementAt(0) || s.SDGs == SDGs.ElementAt(12));
+            IEnumerable<Solution> ExpectedSolutions = Solutions.Where(s => s.SDGs.Any(ss => ss.SDG.SDGNumber == 5) || s.SDGs.Any(ss => ss.SDG.SDGNumber == 13));
             OkObjectResult expectedResult = new OkObjectResult(ExpectedSolutions);
 
             SolutionsController solutionsController = new SolutionsController(mockSolutionServiceContext.Object);

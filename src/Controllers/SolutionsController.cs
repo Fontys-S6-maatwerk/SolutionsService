@@ -66,7 +66,7 @@ namespace SolutionsService.Controllers
                 var solutionsFiltered = new List<Solution>();
                 foreach(var sdg in solutionParameters.SDGs)
                 {
-                    solutionsFiltered.AddRange(solutions.Where(s => s.SDGs.Equals(_context.SDGSolutions.Where(sdgSolution => sdgSolution.SDG.Name.Equals(sdg)))));
+                    solutionsFiltered.AddRange(solutions.Where(solution => solution.SDGs.Any(sdgsolution => sdgsolution.SDG.Name.Equals(sdg))));
                 }
                 solutions = solutionsFiltered.AsQueryable();
             }
